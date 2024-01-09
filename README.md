@@ -7,29 +7,29 @@ If you don't know/don't have a weapon/mod listed below, it's fine, the mod will 
 Copy the below into your server's server.cfg, or to your local Gmod install's listenserver.cfg if you are hosting games just from the Gmod main menu, normally at: C:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\cfg
 
 ```cfg
-ttt_tweak_remington_damage 35                       // Various buffs to underpowered floor weapons, you can change the buffs here (or nerf the weapons instead!)
-ttt_tweak_vector_recoil 0.7
-ttt_tweak_pocket_damage 75
-ttt_tweak_pp19_firedelay 0.05
-ttt_tweak_pp19_damage 7
-ttt_tweak_pp19_recoil 1.2
-ttt_tweak_p228_recoil 25
-ttt_tweak_t38_damage 65
-ttt_tweak_g3sg1_damage 30
-ttt_tweak_gewehr43_damage 40
-ttt_tweak_gewehr43_firedelay 0.39
-ttt_tweak_luger_damage 20
-ttt_tweak_welrod_damage 30
-ttt_tweak_dp_damage 20
-ttt_tweak_banana_gun_ammo 20
-ttt_tweak_banana_gun_damage 30
-ttt_tweak_viper_rifle_damage 65
-ttt_tweak_ares_shrike_damage 12
-ttt_tweak_ares_shrike_recoil 2
-ttt_tweak_ares_shrike_clipsize 100
-ttt_tweak_ares_shrike_defaultclip 200
+ttt_tweaks_remington_damage 35                       // Various buffs to underpowered floor weapons, you can change the buffs here (or nerf the weapons instead!)
+ttt_tweaks_vector_recoil 0.7
+ttt_tweaks_pocket_damage 75
+ttt_tweaks_pp19_firedelay 0.05
+ttt_tweaks_pp19_damage 7
+ttt_tweaks_pp19_recoil 1.2
+ttt_tweaks_p228_recoil 25
+ttt_tweaks_t38_damage 65
+ttt_tweaks_g3sg1_damage 30
+ttt_tweaks_gewehr43_damage 40
+ttt_tweaks_gewehr43_firedelay 0.39
+ttt_tweaks_luger_damage 20
+ttt_tweaks_welrod_damage 30
+ttt_tweaks_dp_damage 20
+ttt_tweaks_banana_gun_ammo 20
+ttt_tweaks_banana_gun_damage 30
+ttt_tweaks_viper_rifle_damage 65
+ttt_tweaks_ares_shrike_damage 12
+ttt_tweaks_ares_shrike_recoil 2
+ttt_tweaks_ares_shrike_clipsize 100
+ttt_tweaks_ares_shrike_defaultclip 200
 
-ttt_tweak_ares_shrike_recoil_exponential 0          // Whether the Ares Shrike has exponentially increasing recoil as you shoot it
+ttt_tweaks_ares_shrike_recoil_exponential 0          // Whether the Ares Shrike has exponentially increasing recoil as you shoot it
 
 ttt_tweaks_artillery_rebuyable 0                    // Whether the artillery cannon is re-buyable or not
 ttt_tweaks_artillery_always_red 1                   // Whether the artillery cannon should always be red

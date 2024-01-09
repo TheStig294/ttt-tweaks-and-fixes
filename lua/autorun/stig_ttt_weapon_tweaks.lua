@@ -6,59 +6,59 @@ if engine.ActiveGamemode() ~= "terrortown" then return end
 hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
     -- First, a bunch of buffs to weapons that were way too weak to be usable
     if class == "weapon_pp_remington" then
-        local damageCvar = CreateConVar("ttt_tweak_remington_damage", 35, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Remington gun")
+        local damageCvar = CreateConVar("ttt_tweaks_remington_damage", 35, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Remington gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_ap_vector" then
-        local recoilCvar = CreateConVar("ttt_tweak_vector_recoil", 0.7, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Recoil of the Vector gun")
+        local recoilCvar = CreateConVar("ttt_tweaks_vector_recoil", 0.7, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Recoil of the Vector gun")
 
         SWEP.Primary.Recoil = recoilCvar:GetFloat()
     elseif class == "weapon_rp_pocket" then
-        local damageCvar = CreateConVar("ttt_tweak_pocket_damage", 75, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Pocket Rifle gun")
+        local damageCvar = CreateConVar("ttt_tweaks_pocket_damage", 75, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Pocket Rifle gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_ap_pp19" then
-        local firedelayCvar = CreateConVar("ttt_tweak_pp19_firedelay", 0.05, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Fire delay of the PP19 gun")
+        local firedelayCvar = CreateConVar("ttt_tweaks_pp19_firedelay", 0.05, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Fire delay of the PP19 gun")
 
         SWEP.Primary.Delay = firedelayCvar:GetFloat()
 
-        local damageCvar = CreateConVar("ttt_tweak_pp19_damage", 7, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the PP19 gun")
+        local damageCvar = CreateConVar("ttt_tweaks_pp19_damage", 7, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the PP19 gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
 
-        local recoilCvar = CreateConVar("ttt_tweak_pp19_recoil", 1.2, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Recoil of the PP19 gun")
+        local recoilCvar = CreateConVar("ttt_tweaks_pp19_recoil", 1.2, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Recoil of the PP19 gun")
 
         SWEP.Primary.Recoil = recoilCvar:GetFloat()
     elseif class == "weapon_ttt_p228" then
-        local damageCvar = CreateConVar("ttt_tweak_p228_recoil", 25, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the P228 gun")
+        local damageCvar = CreateConVar("ttt_tweaks_p228_recoil", 25, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the P228 gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_t38" then
-        local damageCvar = CreateConVar("ttt_tweak_t38_damage", 65, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Type 38 gun")
+        local damageCvar = CreateConVar("ttt_tweaks_t38_damage", 65, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Type 38 gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_ttt_g3sg1" then
-        local damageCvar = CreateConVar("ttt_tweak_g3sg1_damage", 30, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the G3SG1 gun")
+        local damageCvar = CreateConVar("ttt_tweaks_g3sg1_damage", 30, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the G3SG1 gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_gewehr43" then
-        local damageCvar = CreateConVar("ttt_tweak_gewehr43_damage", 40, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Gewehr Type 43 gun")
+        local damageCvar = CreateConVar("ttt_tweaks_gewehr43_damage", 40, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Gewehr Type 43 gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
 
-        local firedelayCvar = CreateConVar("ttt_tweak_gewehr43_firedelay", 0.39, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Fire delay of the Gewehr Type 43 gun")
+        local firedelayCvar = CreateConVar("ttt_tweaks_gewehr43_firedelay", 0.39, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Fire delay of the Gewehr Type 43 gun")
 
         SWEP.Primary.Delay = firedelayCvar:GetFloat()
     elseif class == "weapon_luger" then
-        local damageCvar = CreateConVar("ttt_tweak_luger_damage", 20, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Luger gun")
+        local damageCvar = CreateConVar("ttt_tweaks_luger_damage", 20, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Luger gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_welrod" then
-        local damageCvar = CreateConVar("ttt_tweak_welrod_damage", 30, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Welrod gun")
+        local damageCvar = CreateConVar("ttt_tweaks_welrod_damage", 30, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Welrod gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_dp" then
-        local damageCvar = CreateConVar("ttt_tweak_dp_damage", 20, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the DP gun")
+        local damageCvar = CreateConVar("ttt_tweaks_dp_damage", 20, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the DP gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "st_bananapistol" then
@@ -69,12 +69,12 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         SWEP.AmmoEnt = "item_ammo_pistol_ttt"
         SWEP.PrintName = "Banana Gun"
 
-        local ammoCvar = CreateConVar("ttt_tweak_banana_gun_ammo", 20, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Ammo of the Banana gun")
+        local ammoCvar = CreateConVar("ttt_tweaks_banana_gun_ammo", 20, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Ammo of the Banana gun")
 
         SWEP.Primary.ClipSize = ammoCvar:GetFloat()
         SWEP.Primary.DefaultClip = SWEP.Primary.ClipSize
 
-        local damageCvar = CreateConVar("ttt_tweak_banana_gun_damage", 30, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Banana gun")
+        local damageCvar = CreateConVar("ttt_tweaks_banana_gun_damage", 30, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Banana gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "swep_rifle_viper" then
@@ -91,7 +91,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         SWEP.DrawCrosshair = false
         SWEP.Icon = "vgui/ttt/ttt_viper_rifle"
 
-        local damageCvar = CreateConVar("ttt_tweak_viper_rifle_damage", 65, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Viper Rifle gun")
+        local damageCvar = CreateConVar("ttt_tweaks_viper_rifle_damage", 65, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Viper Rifle gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_hp_ares_shrike" then
@@ -99,23 +99,23 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         -- Recoil now increases linearly, which is actually manageable
         -- Also lower its linear recoil slightly and increase damage slightly
         -- Give slightly more ammo as well
-        local damageCvar = CreateConVar("ttt_tweak_ares_shrike_damage", 12, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Ares Shrike gun")
+        local damageCvar = CreateConVar("ttt_tweaks_ares_shrike_damage", 12, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Ares Shrike gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
 
-        local recoilCvar = CreateConVar("ttt_tweak_ares_shrike_recoil", 2, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Recoil of the Ares Shrike gun")
+        local recoilCvar = CreateConVar("ttt_tweaks_ares_shrike_recoil", 2, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Recoil of the Ares Shrike gun")
 
         SWEP.Primary.Recoil = recoilCvar:GetFloat()
 
-        local clipsizeCvar = CreateConVar("ttt_tweak_ares_shrike_clipsize", 100, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Clip size of the Ares Shrike gun")
+        local clipsizeCvar = CreateConVar("ttt_tweaks_ares_shrike_clipsize", 100, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Clip size of the Ares Shrike gun")
 
         SWEP.Primary.ClipSize = clipsizeCvar:GetInt()
 
-        local defaultclipCvar = CreateConVar("ttt_tweak_ares_shrike_defaultclip", 200, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Starting ammo of the Ares Shrike gun")
+        local defaultclipCvar = CreateConVar("ttt_tweaks_ares_shrike_defaultclip", 200, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Starting ammo of the Ares Shrike gun")
 
         SWEP.Primary.DefaultClip = defaultclipCvar:GetInt()
 
-        local exponentialCvar = CreateConVar("ttt_tweak_ares_shrike_recoil_exponential", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the Ares Shrike's recoil exponentially increases as you shoot it, rather than linearly")
+        local exponentialCvar = CreateConVar("ttt_tweaks_ares_shrike_recoil_exponential", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the Ares Shrike's recoil exponentially increases as you shoot it, rather than linearly")
 
         if not exponentialCvar:GetBool() then
             function SWEP:PrimaryAttack(worldsnd)
@@ -141,11 +141,11 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         end
     elseif class == "weapon_ttt_artillery" then
         -- Make artillery cannon always red and not re-buyable
-        local rebuyableCvar = CreateConVar("ttt_tweak_artillery_rebuyable", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the artillery cannon is re-buyable or not")
+        local rebuyableCvar = CreateConVar("ttt_tweaks_artillery_rebuyable", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the artillery cannon is re-buyable or not")
 
         SWEP.LimitedStock = rebuyableCvar:GetBool()
 
-        local alwaysRedCvar = CreateConVar("ttt_tweak_artillery_always_red", "1", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the artillery cannon should always be red")
+        local alwaysRedCvar = CreateConVar("ttt_tweaks_artillery_always_red", "1", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the artillery cannon should always be red")
 
         if alwaysRedCvar:GetBool() then
             SWEP.CannonColor = HSVToColor(0, 0.7, 0.7)
@@ -157,7 +157,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
     elseif class == "weapon_rp_railgun" then
         -- Turns the railgun into the "Free kill gun" that allows to be killed or to kill without karma penalty
         -- (Not enabled by default)
-        local freeKillGunCvar = CreateConVar("ttt_tweak_railgun_no_karma_penalty", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the railgun doesn't take karma for kills, and killing someone holding a railgun doesn't take karma either")
+        local freeKillGunCvar = CreateConVar("ttt_tweaks_railgun_no_karma_penalty", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the railgun doesn't take karma for kills, and killing someone holding a railgun doesn't take karma either")
 
         if not freeKillGunCvar:GetBool() then return end
         SWEP.PrintName = "Free Kill Gun"
@@ -260,13 +260,13 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         -- Fixes becoming permanently invisible if handcuffed while using the cloak
         -- Makes the weapon given to the Killer role as part of their weapon loadout (not enabled by default)
         -- Makes it so you cannot use the Amatrasu weapon at the same time as using the cloak
-        local killerCvar = CreateConVar("ttt_tweak_invisibility_cloak_killer", "0", {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Whether the invisibility cloak should be given to Killers as a loadout weapon")
+        local killerCvar = CreateConVar("ttt_tweaks_invisibility_cloak_killer", "0", {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Whether the invisibility cloak should be given to Killers as a loadout weapon")
 
         if killerCvar:GetBool() then
             SWEP.InLoadoutFor = {ROLE_KILLER}
         end
 
-        local amatrasuCvar = CreateConVar("ttt_tweak_invisibility_cloak_removes_amatrasu", "1", nil, "Whether using the invisibility cloak removes your amatrasu weapon if you have one")
+        local amatrasuCvar = CreateConVar("ttt_tweaks_invisibility_cloak_removes_amatrasu", "1", nil, "Whether using the invisibility cloak removes your amatrasu weapon if you have one")
 
         function SWEP:Cloak()
             local owner = self:GetOwner()
@@ -338,7 +338,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         end)
     elseif class == "weapon_ttt_bonk_bat" then
         -- Adds a ceiling and floor to the jail to prevent players from escaping
-        local ceilingCvar = CreateConVar("ttt_tweak_bonk_bat_floor_ceiling", "1", nil, "Whether the jail created by the bonk bat should have a floor and ceiling")
+        local ceilingCvar = CreateConVar("ttt_tweaks_bonk_bat_floor_ceiling", "1", nil, "Whether the jail created by the bonk bat should have a floor and ceiling")
 
         function SWEP:PrimaryAttack()
             local ply = self:GetOwner()
@@ -452,7 +452,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         end
     elseif class == "weapon_ttt_hotpotato" then
         -- Changes the music of the hot potato to a royalty-free alternative
-        local musicCvar = CreateConVar("ttt_tweak_hot_potato_no_copyright_music", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the hot potato's music is replaced with non-copyright music")
+        local musicCvar = CreateConVar("ttt_tweaks_hot_potato_no_copyright_music", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the hot potato's music is replaced with non-copyright music")
 
         if not musicCvar:GetBool() then return end
         local oldMusic = "hotpotatoloop.wav"
@@ -469,10 +469,10 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
             return old_fn_CleanUp(ply)
         end
 
-        SWEP.OldTweakPotatoTime = SWEP.PotatoTime
+        SWEP.OldTweaksPotatoTime = SWEP.PotatoTime
 
         function SWEP:PotatoTime(ply, PotatoChef)
-            SWEP:OldTweakPotatoTime(ply, PotatoChef)
+            SWEP:OldTweaksPotatoTime(ply, PotatoChef)
             ply:StopSound(oldMusic)
             ply:StartLoopingSound(newMusic)
 
@@ -481,10 +481,10 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
             end)
         end
 
-        SWEP.OldTweakDetonate = SWEP.Detonate
+        SWEP.OldTweaksDetonate = SWEP.Detonate
 
         function SWEP:Detonate(ply)
-            SWEP:OldTweakDetonate(ply)
+            SWEP:OldTweaksDetonate(ply)
             ply:StopSound(newMusic)
         end
     end
@@ -498,7 +498,7 @@ end)
 hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, class)
     if class == "zay_shell" and SERVER then
         -- Makes it so players behind cover take reduced damage from the artillery cannon
-        local coverCvar = CreateConVar("ttt_tweak_artillery_cover_damage", "1", nil, "Wether players should take reduced damage behind cover from the artillery cannon")
+        local coverCvar = CreateConVar("ttt_tweaks_artillery_cover_damage", "1", nil, "Wether players should take reduced damage behind cover from the artillery cannon")
 
         function ENT:PhysicsCollide(data, phys)
             if self.zay_Collided == true then return end
