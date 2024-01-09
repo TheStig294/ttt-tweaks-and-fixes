@@ -7,7 +7,7 @@ local verisonUpdateSpamCvar = CreateConVar("ttt_tweaks_simfphys_lvs_update_messa
 
 local tipsCvar = CreateConVar("ttt_tweaks_tips", "1", FCVAR_REPLICATED, "Whether TTT tips are enabled that show at the bottom of the screen while dead")
 local inspectCvar = CreateConVar("ttt_tweaks_tfa_inspect", "0", nil, "Whether inspecting TFA weapons is enabled")
-local wallhacksCvar = CreateConVar("ttt_tweaks_auto_trigger_wallhack_randomat", "0", nil, "Minutes into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable")
+local wallhacksCvar = CreateConVar("ttt_tweaks_auto_trigger_wallhack_randomat", "0", nil, "Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable")
 
 hook.Add("PostGamemodeLoaded", "StigTTTTweaks", function()
     -- Stopping the update now spam in the chat box from the vehicles base mod: LVS
