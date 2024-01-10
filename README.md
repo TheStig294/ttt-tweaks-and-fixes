@@ -53,6 +53,8 @@ ttt_tweaks_tips 1                                   // Whether TTT tips are enab
 ttt_tweaks_tfa_inspect 0                            // Whether inspecting TFA weapons is enabled
 
 ttt_tweaks_auto_trigger_wallhack_randomat 0         // Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable
+
+ttt_tweaks_pickup_prompt 1                          // Whether a 'Press E to pickup' prompt appears when looking closely at a weapon that can be picked up in that way
 ```
 
 ## Steam Workshop Link
