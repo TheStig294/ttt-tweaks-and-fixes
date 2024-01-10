@@ -70,7 +70,7 @@ if CLIENT then
 
         -- "Press E to Pickup" prompt
         if pickupPromptCvar:GetBool() then
-            local weaponQuickSwapInstalled = file.Exists("gamemodes/terrortown/gamemode/lang/weapon_quick_swap.lua", "THIRDPARTY")
+            local weaponQuickSwapInstalled = file.Exists("gamemodes/terrortown/gamemode/lang/weapon_quick_swap.lua", "GAME")
             local client = LocalPlayer()
             local pickupableWeapon = false
 
