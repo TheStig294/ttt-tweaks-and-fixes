@@ -82,14 +82,13 @@ if CLIENT then
 
                 -- First, check for a weapon being looked at at all
                 -- Then check if it is close enough, 70 is actual distance, use 70*70=4900 for performance
-                if not IsValid(wep) or not wep:IsWeapon() or not wep.Kind or wep:GetPos():DistToSqr(client:GetPos()) > 4900 then
+                if not IsValid(wep) or not wep:IsWeapon() or not wep.Kind or not wep:IsOnGround() or wep:GetPos():DistToSqr(client:GetPos()) > 4900 then
                     pickupableWeapon = false
 
                     return
                 end
 
                 -- Finally check if the weapon is able to be picked up
-                -- print(weaponQuickSwapInstalled, wep.Kind == WEAPON_EQUIP1, wep.Kind == WEAPON_EQUIP2, wep.Kind > WEAPON_ROLE)
                 if weaponQuickSwapInstalled or wep.Kind == WEAPON_EQUIP1 or wep.Kind == WEAPON_EQUIP2 or wep.Kind > WEAPON_ROLE then
                     pickupableWeapon = true
                 else
