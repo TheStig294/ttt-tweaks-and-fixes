@@ -185,10 +185,6 @@ Added option for TF2 damage numbers mod to have better colour defaults\
 Added option for the "No-one can hide from my sight" randomat to trigger after there are so many minutes remaining"\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2055805086>
 
-- "Banana Pistol" by SweptThr.one\
-Fixed not having a worldmodel and not using TTT ammo, also increase the weapon's damage and ammo slightly\
-<https://steamcommunity.com/sharedfiles/filedetails/?id=921509375>
-
 - "TFA Base" by YuRaNnNzZZ\
 Added option to completely disable the TFA weapon inspect button as people accidentally press it and get stuck on the inspection screen\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
