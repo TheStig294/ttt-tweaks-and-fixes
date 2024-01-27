@@ -3,6 +3,8 @@
 if engine.ActiveGamemode() ~= "terrortown" then return end
 
 if SERVER then
+    local invisibleSpectatorsCvar = CreateConVar("ttt_tweaks_invisible_spectators", 1, nil, "Whether spectators should be forced to be invisible", 0, 1)
+
     -- Fixes "Custom Chat" mod letting dead players speak with living players
     -- The problem is the Custom Chat mod has re-created the chat box from scratch, and so has to re-add all of the hooks the old chat box had
     -- The creator missed a few hooks, so we have to get the server-side only dead chat convar over to a client-side only hook the mod actually supports
@@ -18,6 +20,19 @@ if SERVER then
     cvars.AddChangeCallback("ttt_limit_spectator_chat", function(convar_name, value_old, value_new)
         SetGlobalBool("ttt_limit_spectator_chat", tobool(value_new))
     end)
+
+    -- Fixes spectators being visible at the start of the round
+    if invisibleSpectatorsCvar:GetBool() then
+        hook.Add("TTTPrepareRound", "StigTTTFixes", function()
+            for _, ply in ipairs(player.GetAll()) do
+                if not ply:Alive() or ply:IsSpec() then
+                    ply:SetNoDraw(true)
+                else
+                    ply:SetNoDraw(false)
+                end
+            end
+        end)
+    end
 end
 
 if CLIENT then
