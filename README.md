@@ -1,5 +1,7 @@
 # TTT Tweaks and Fixes
 
+## Tweaks
+
 Below is a list of all convars/options available with this mod, which allows you to turn on and off individual tweaks. Set to 1 to enable, and 0 to disable.\
 \
 If you don't know/don't have a weapon/mod listed below, it's fine, the mod will only apply the fixes and tweaks to the things you have installed on the server.\
@@ -68,4 +70,129 @@ ttt_tweaks_invisible_spectators 1                   // Fixes spectators being vi
 'Happy Happy Game Show' Kevin MacLeod (incompetech.com)\
 Licensed under Creative Commons: By Attribution 4.0 License\
 <http://creativecommons.org/licenses/by/4.0/>\
-Used when Hot Potato music replacement setting is on
+Used when Hot Potato music replacement setting is on\
+\
+Credit to the original authors of the various mods fixed for the modified bits of their code used for the fixes:
+
+- "Lift Grenade" by Corvatile\
+Fixed error spam\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2958417945>
+
+- "Mimic Spanwer" by Jensons\
+Fixed error spam, fixed the "Mimics spawned" message not displaying to Custom Roles traitors\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1092624255>
+
+- "Beenade" by Jensons\
+Fixed beenade not dealing less damage to Custom Roles traitors\
+Fixed missing NULL entity check error\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=913310851>
+
+- "Shark Trap" by TheBonBon\
+Fixed the shark trap not killing when it should\
+and error spamming whenever touching something that is not a player\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2550782000>
+
+- "Orbital Bass Cannon" by Jase\
+Fixed a heck of a lua error dump spam whenever the orbital bass cannon is used\
+(10,000+ lines of errors...)\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=252189849>
+
+- "Command Prompt" by Dark\
+Fixed many lua errors with the different effects of the command prompt\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2181940209>
+
+- "Amaterasu" by Dilusionz\
+Fixed missing valid player check lua error\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1978094981>
+
+- "Time Manipulator" by Tony_Bamanabon\
+Fixed various lua errors\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1318271171>
+
+- "Homerun Bat" by Hagen\
+Fixed lua error if you appear to hit something on the server but not on the client\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=648957314>
+
+- "The PropHuntGun" by Jensons\
+Fixed the prop hunt gun not fully disguising you, you are now fully invisible and role icons like the detective icon no longer show overhead\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2796353349>
+
+- "Artillery Cannon" by Valafi\
+Added option for players to behind cover take reduced damage from the artillery cannon, added options to make artillery cannon always red and not re-buyable\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2087368173>
+
+- "Hot Potato" by SkyDivingL\
+Added option of changing the music of the hot potato to a royalty-free alternative\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2377790970>
+
+- "Bonk Bat" by kev0\
+Added an option for adding a ceiling and floor to the jail to prevent players from escaping\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2475989756>
+
+- "Cloaking Device 2.0" by twilight\
+Fixed becoming permanently invisible if handcuffed while using the cloak, added option to make the weapon given to the Killer role as part of their weapon loadout (not enabled by default), makes it so you cannot use the Amatrasu weapon at the same time as using the cloak\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1389756626>
+
+## Extra fixes
+
+The following mods were fixed without needing to change bits of their code.
+
+- "Fortnite Building Tool" by LeBroomer\
+Fixed lua error when holstering the fortnite building tool\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1433010063>
+
+- "R8 Revolver" by Corvatile\
+Fixed shoot sound having no volume drop-off (shoot sound is global), fixed pistol not taking pistol slot\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2903604575>
+
+- "Big Glock Compressed" by Frisco\
+Fixed big glock not using TTT ammo\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2169931075>
+
+- "Rocket Thruster" by Travh98\
+Fixed rocket thruster using wrong HUD slot and its internal name as its display name\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2458340155>
+
+- "Orbital Headcrab Launcher" by Leo\
+Fixed headcrab launcher's name being too long\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2068059005>
+
+- "Mario Mushroom" by Matrix\
+Fixed mario mushroom's name being too long\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2813468706>
+
+- "Immortality Potion" by Malivil\
+Fix immortality potion's name being too long\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2593566065>
+
+- "No Scope AWP" by satrams\
+Fixed no-scope AWP taking different slot visually than it actually takes\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2860986215>
+
+- "Viper Rifle" by Kemot44\
+Fixed not using TTT ammo and having a weird viewmodel, increased its damage to 65 to make it a clean 2 shot kill to make up for its long shoot delay and high recoil\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1595492061>
+
+- "Banana Pistol" by SweptThr.one\
+Fixed not having a worldmodel and not using TTT ammo, also increase the weapon's damage and ammo slightly\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=921509375>
+
+- "TF2 Damage Numbers" by wget\
+Added option for TF2 damage numbers mod to have better colour defaults\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2791060001>
+
+- "Randomat 2.0 for Custom Roles" by Malivil\
+Added option for the "No-one can hide from my sight" randomat to trigger after there are so many minutes remaining"\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2055805086>
+
+- "Banana Pistol" by SweptThr.one\
+Fixed not having a worldmodel and not using TTT ammo, also increase the weapon's damage and ammo slightly\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=921509375>
+
+- "TFA Base" by YuRaNnNzZZ\
+Added option to completely disable the TFA weapon inspect button as people accidentally press it and get stuck on the inspection screen\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
+
+- "Custom Chat" by StyledStrike\
+Fixed "Custom Chat" mod letting dead players speak with living players\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2799307109>
