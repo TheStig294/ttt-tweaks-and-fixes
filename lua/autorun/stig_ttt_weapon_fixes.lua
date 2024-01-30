@@ -760,7 +760,7 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
 
             -- Fixed error when victim is nil
             if IsValid(attacker) and attacker:IsNPC() and attacker:GetClass() == BeeNPCClass then
-                if not IsValid(victim) then
+                if not IsValid(victim) or not victim.GetRole then
                     dmg:SetDamage(BeeInnocentDamage)
                 elseif victim:GetRole() == ROLE_INNOCENT or (victim.IsInnocentTeam and victim:IsInnocentTeam()) then
                     dmg:SetDamage(BeeInnocentDamage)
