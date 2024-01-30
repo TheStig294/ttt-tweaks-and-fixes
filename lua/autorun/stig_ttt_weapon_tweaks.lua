@@ -77,6 +77,23 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         local damageCvar = CreateConVar("ttt_tweaks_banana_gun_damage", 30, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Banana gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
+
+        SWEP.WElements = {
+            ["bananaworld"] = {
+                type = "Model",
+                model = "models/props/cs_italy/bananna.mdl",
+                bone = "ValveBiped.Bip01_R_Hand",
+                rel = "",
+                pos = Vector(5.714, 2.714, -1.558),
+                angle = Angle(0, 90, 0),
+                size = Vector(1, 1, 1),
+                color = Color(255, 255, 255, 255),
+                surpresslightning = false,
+                material = "",
+                skin = 0,
+                bodygroup = {}
+            }
+        }
     elseif class == "swep_rifle_viper" then
         -- Fix not using TTT ammo and having a weird viewmodel
         -- Increase its damage to 65 to make it a clean 2 shot kill to make up for its long shoot delay and high recoil
