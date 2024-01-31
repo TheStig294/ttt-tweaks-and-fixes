@@ -85,7 +85,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
                 bone = "ValveBiped.Bip01_R_Hand",
                 rel = "",
                 pos = Vector(5.714, 2.714, -1.558),
-                angle = Angle(0, 90, 0),
+                angle = Angle(0, 90, 45),
                 size = Vector(1, 1, 1),
                 color = Color(255, 255, 255, 255),
                 surpresslightning = false,
