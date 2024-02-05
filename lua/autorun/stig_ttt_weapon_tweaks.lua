@@ -179,21 +179,13 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
         if not freeKillGunCvar:GetBool() then return end
         SWEP.PrintName = "Free Kill Gun"
 
-        hook.Add("EntityTakeDamage", "TTTTweaksFreeKillHolderCheck", function(target, dmg)
-            if IsValid(target) and target:IsPlayer() then
-                local wep = target:GetActiveWeapon()
-
-                if IsValid(wep) and WEPS.GetClass(wep) == "weapon_rp_railgun" then
-                    target.TTTTweaksRailgunFreeKill = true
-                else
-                    target.TTTTweaksRailgunFreeKill = true
-                end
-            end
-        end)
-
         hook.Add("TTTKarmaGivePenalty", "TTTTweaksFreeKillKarma", function(ply, penalty, victim)
-            local wep = ply:GetActiveWeapon()
-            if (IsValid(wep) and WEPS.GetClass(wep) == "weapon_rp_railgun") or victim.TTTTweaksRailgunFreeKill then return true end
+            -- If someone uses the free kill gun on someone, don't take their karma
+            local plyActiveWep = ply:GetActiveWeapon()
+            if IsValid(plyActiveWep) and WEPS.GetClass(plyActiveWep) == class then return true end
+            -- If someone shoots someone holding the free kill gun, don't take their karma either
+            local victimActiveWep = victim:GetActiveWeapon()
+            if IsValid(victimActiveWep) and WEPS.GetClass(victimActiveWep) == class then return true end
         end)
 
         function SWEP:ShootBullet(dmg, recoil, numbul, cone)
