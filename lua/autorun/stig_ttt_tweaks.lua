@@ -39,6 +39,9 @@ if SERVER then
         if ConVarExists("sv_tfa_cmenu") and not inspectCvar:GetBool() then
             RunConsoleCommand("sv_tfa_cmenu", 0)
         end
+
+        -- Removes the "Ben is awesome" chat message spam from Jenson's Beenade weapon
+        hook.Add("PlayerInitialSpawn", "SteamIDDisplay", function() end)
     end)
 
     hook.Add("TTTBeginRound", "StigTTTTweaks", function()
