@@ -21,14 +21,36 @@ if SERVER then
 end
 
 -- Fixes spectators being visible at the start of the round
-hook.Add("TTTPrepareRound", "StigTTTFixes", function()
+local function FixVisibleSpectators()
     for _, ply in ipairs(player.GetAll()) do
-        if not ply:Alive() or ply:IsSpec() then
+        if ply:IsSpec() then
             ply:SetNoDraw(true)
+            ply:SetRenderMode(RENDERMODE_TRANSALPHA)
+            ply:SetMaterial("models/effects/vol_light001")
+
+            if SERVER then
+                ply:Fire("alpha", 0, 0)
+            end
         else
             ply:SetNoDraw(false)
+            ply:DrawShadow(true)
+            ply:SetMaterial("")
+            ply:SetRenderMode(RENDERMODE_NORMAL)
+
+            if SERVER then
+                ply:Fire("alpha", 255, 0)
+            end
         end
     end
+end
+
+hook.Add("TTTPrepareRound", "StigTTTFixes", function()
+    FixVisibleSpectators()
+    timer.Simple(0.1, FixVisibleSpectators)
+
+    timer.Create("StigTTTFixesVisibleSpectators", 1, 4, function()
+        FixVisibleSpectators()
+    end)
 end)
 
 if CLIENT then
