@@ -69,6 +69,7 @@ if CLIENT then
         if ConVarExists("ttt_combattext_antialias") and damagenumbersCvar:GetBool() then
             RunConsoleCommand("ttt_combattext_antialias", "1")
             RunConsoleCommand("ttt_combattext_color", "ffffff80")
+            RunConsoleCommand("ttt_combattext", "1")
         end
 
         -- "Press E to Pickup" prompt
