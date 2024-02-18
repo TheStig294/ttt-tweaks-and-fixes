@@ -9,9 +9,9 @@ if SERVER then
     -- ttt_limit_spectator_chat is a vanilla TTT convar and it is server-side only, because it used a server-side hook (GM:PlayerCanSeePlayersChat, that the Custom Chat creator missed)
     -- 
     -- Setting the initial value of the limit chat convar for the dead chat fix
-    hook.Add("TTTPrepareRound", "FixTTTCustomChat", function()
+    hook.Add("TTTPrepareRound", "StigTTTFixCustomChat", function()
         SetGlobalBool("ttt_limit_spectator_chat", GetConVar("ttt_limit_spectator_chat"):GetBool())
-        hook.Remove("TTTPrepareRound", "FixTTTCustomChat")
+        hook.Remove("TTTPrepareRound", "StigTTTFixCustomChat")
     end)
 
     -- And if the convar is updated mid-game, we need to update the global bool too
@@ -55,7 +55,7 @@ end)
 
 if CLIENT then
     -- Fixes "Custom Chat" mod letting dead players speak with living players
-    hook.Add("OnPlayerChat", "FixTTTCustomChat", function(ply, text, teamChat, isDead)
+    hook.Add("OnPlayerChat", "StigTTTFixCustomChat", function(ply, text, teamChat, isDead)
         if GetGlobalBool("ttt_limit_spectator_chat") and isDead and LocalPlayer():Alive() and not LocalPlayer():IsSpec() then return true end
     end)
 end

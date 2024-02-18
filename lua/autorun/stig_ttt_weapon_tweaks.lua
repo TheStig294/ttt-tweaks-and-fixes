@@ -3,7 +3,7 @@
 -- Any weapon that has both a fix and tweak resides here, not in stig_ttt_weapon_fixes.lua
 if engine.ActiveGamemode() ~= "terrortown" then return end
 
-hook.Add("PreRegisterSWEP", "StigSpecialWeaponChanges", function(SWEP, class)
+hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
     -- First, a bunch of buffs to weapons that were way too weak to be usable
     if class == "weapon_pp_remington" then
         local damageCvar = CreateConVar("ttt_tweaks_remington_damage", 35, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Remington gun")

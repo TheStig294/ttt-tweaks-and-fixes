@@ -57,6 +57,8 @@ ttt_tweaks_tfa_inspect 0                            // Whether inspecting TFA we
 ttt_tweaks_auto_trigger_wallhack_randomat 0         // Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable
 
 ttt_tweaks_pickup_prompt 1                          // Whether a 'Press E to pickup' prompt appears when looking closely at a weapon that can be picked up in that way
+
+ttt_tweaks_deathcam_thirdperson 1                   // Whether your camera views your body in third-person rather than first-person on dying
 ```
 
 ## Steam Workshop Link

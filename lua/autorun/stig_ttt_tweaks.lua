@@ -4,10 +4,12 @@ if engine.ActiveGamemode() ~= "terrortown" then return end
 -- Server convars
 local inspectCvar
 local wallhacksCvar
+local deathcamThirdpersonCvar
 
 if SERVER then
     inspectCvar = CreateConVar("ttt_tweaks_tfa_inspect", "0", nil, "Whether inspecting TFA weapons is enabled")
     wallhacksCvar = CreateConVar("ttt_tweaks_auto_trigger_wallhack_randomat", "0", nil, "Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable")
+    deathcamThirdpersonCvar = CreateConVar("ttt_tweaks_deathcam_thirdperson", "1", nil, "Whether your camera views your body in third-person rather than first-person on dying")
 end
 
 -- Replicated convars
@@ -55,6 +57,12 @@ if SERVER then
 
     hook.Add("TTTEndRound", "StigTTTTweaks", function()
         timer.Remove("TTTTweaksAutoTriggerWallhacks")
+    end)
+
+    hook.Add("PostPlayerDeath", "StigTTTTweaks", function(ply)
+        if deathcamThirdpersonCvar:GetBool() and ply:GetObserverMode() == OBS_MODE_IN_EYE then
+            ply:SetObserverMode(OBS_MODE_CHASE)
+        end
     end)
 end
 
