@@ -59,6 +59,8 @@ ttt_tweaks_auto_trigger_wallhack_randomat 0         // Seconds into a round to t
 ttt_tweaks_pickup_prompt 1                          // Whether a 'Press E to pickup' prompt appears when looking closely at a weapon that can be picked up in that way
 
 ttt_tweaks_deathcam_thirdperson 1                   // Whether your camera views your body in third-person rather than first-person on dying
+
+ttt_tweaks_dead_ringer_original_behaviour 1         // Whether the TTT2 version of the dead ringer should act like the original version by default
 ```
 
 ## Steam Workshop Link
@@ -132,6 +134,10 @@ Added an option for adding a ceiling and floor to the jail to prevent players fr
 - "Cloaking Device 2.0" by twilight\
 Fixed becoming permanently invisible if handcuffed while using the cloak, added option to make the weapon given to the Killer role as part of their weapon loadout (not enabled by default), makes it so you cannot use the Amatrasu weapon at the same time as using the cloak\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1389756626>
+
+- "[TTT/2] Dead Ringer [ITEM]" by dhkatz\
+Added convar to make the dead ringer behave exactly like the original version by default\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=3074845055>
 
 ## Extra fixes
 

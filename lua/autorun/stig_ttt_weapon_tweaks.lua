@@ -498,6 +498,120 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
             SWEP:OldTweaksDetonate(ply)
             ply:StopSound(newMusic)
         end
+    elseif class == "weapon_ttt_deadringer" and ConVarExists("ttt_deadringer_sound_activate_local") then
+        -- Have to do extra check to differentiate other versions of the dead ringer with the same classname
+        -- Changes the TTT2 version of the dead ringer to act like the original verion by default
+        local ogCvar = CreateConVar("ttt_tweaks_dead_ringer_original_behaviour", "1", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the TTT2 version of the dead ringer should act like the original version by default")
+
+        if not ogCvar:GetBool() then return end
+        -- Dead ringer auto-reactivates after it recharges
+        RunConsoleCommand("ttt_deadringer_cloak_reactivate", 1)
+        -- Dead ringer activate/deactive sounds can be heard by everyone
+        RunConsoleCommand("ttt_deadringer_sound_activate_local", 0)
+        RunConsoleCommand("ttt_deadringer_sound_deactivate_local", 0)
+
+        -- Only purchasable by traitors
+        SWEP.CanBuy = {ROLE_TRAITOR}
+
+        local CLOAK = {
+            NONE = 0,
+            READY = 1,
+            DISABLED = 2,
+            CLOAKED = 3,
+            UNCLOAKED = 4
+        }
+
+        -- Attempting to shoot while cloaked uncloaks you
+        function SWEP:Think()
+            local owner = self:GetOwner()
+            if not IsValid(owner) then return end
+            local cloaked = self:GetCloaked()
+            local status = self:GetStatus()
+            local chargeTime = owner:GetNWFloat("DRChargeTime", 1 / 0)
+
+            if CLIENT and owner.DRNoTarget == nil then
+                owner.DRNoTarget = Either(owner.NoTarget == nil, -1, owner.NoTarget and 1 or 0)
+            end
+
+            if not cloaked then
+                if status == CLOAK.UNCLOAKED and chargeTime < CurTime() then
+                    if SERVER then
+                        if self.CVarCloakReactivate:GetBool() then
+                            self:SetStatus(CLOAK.READY)
+                        else
+                            self:SetStatus(CLOAK.DISABLED)
+                        end
+
+                        if TTT2 and not self.CVarHudClassic:GetBool() then
+                            STATUS:AddStatus(owner, "deadringer_ready")
+                        end
+                    end
+
+                    if self.CVarSoundRecharge:GetBool() then
+                        self:PlaySound("ttt/recharged.wav", self.CVarSoundRechargeLocal:GetBool() and owner or nil)
+                    end
+                end
+
+                if CLIENT then
+                    if owner.NoTarget and owner.DRNoTarget < 1 then
+                        owner.NoTarget = Either(owner.DRNoTarget == -1, nil, false)
+                    end
+
+                    for _, wep in ipairs(owner:GetWeapons()) do
+                        if IsValid(wep) then
+                            if wep.DRNoDraw == nil then
+                                wep.DRNoDraw = wep:GetNoDraw()
+                            end
+
+                            if wep:GetNoDraw() and not wep.DRNoDraw then
+                                wep:SetNoDraw(false)
+                            end
+                        end
+                    end
+                end
+            else
+                if status == CLOAK.CLOAKED then
+                    if CLIENT then
+                        if not self.CVarCloakTargetid:GetBool() and owner.NoTarget ~= true then
+                            owner.NoTarget = true
+                        end
+
+                        for _, wep in ipairs(owner:GetWeapons()) do
+                            if IsValid(wep) then
+                                if wep.DRNoDraw == nil then
+                                    wep.DRNoDraw = wep:GetNoDraw()
+                                end
+
+                                if not wep:GetNoDraw() then
+                                    wep:SetNoDraw(true)
+                                end
+                            end
+                        end
+                    end
+
+                    -- Fix being able to shoot while cloaked
+                    if chargeTime < CurTime() or owner:KeyDown(IN_ATTACK) or owner:KeyDown(IN_ATTACK2) then
+                        self:Uncloak(owner)
+                    end
+                end
+            end
+
+            if SERVER and TTT2 and self.CVarHudClassic:GetBool() then
+                STATUS:RemoveStatus(owner, "deadringer_ready")
+                STATUS:RemoveStatus(owner, "deadringer_cloaked")
+                STATUS:RemoveStatus(owner, "deadringer_cooldown")
+            end
+        end
+
+        -- Fixing uncloak sound being overriden by gunshot sounds
+        if CLIENT then
+            net.Receive("DR.Sound", function()
+                local wep = net.ReadEntity()
+                local snd = net.ReadString()
+                if not IsValid(wep) then return end
+                wep:EmitSound(snd, 100, 100, 1, CHAN_STATIC)
+            end)
+        end
     end
 end)
 
