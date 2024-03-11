@@ -111,6 +111,13 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         local damageCvar = CreateConVar("ttt_tweaks_viper_rifle_damage", 65, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Viper Rifle gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
+
+        function SWEP:Deploy()
+            self:SetHoldType(self.HoldType)
+            self:SendWeaponAnim(ACT_VM_DRAW)
+
+            return true
+        end
     elseif class == "weapon_hp_ares_shrike" then
         -- Remove the exponential component of the ares shrike's recoil
         -- Recoil now increases linearly, which is actually manageable
