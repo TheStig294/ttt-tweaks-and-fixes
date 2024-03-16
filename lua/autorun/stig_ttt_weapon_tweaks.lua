@@ -684,5 +684,65 @@ hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, cl
             SafeRemoveEntityDelayed(self, deltime)
             self.zay_Collided = true
         end
+    elseif class == "ttt_redblackhole" and SERVER then
+        -- Makes it so all players take regular damage from the red matter bomb, regardless of role
+        local dmgCvar = CreateConVar("ttt_tweaks_rmb_damage_reduction", "0", FCVAR_ARCHIVE, "Whether vanilla traitors take less damage from the red matter bomb, and vanilla jesters are immune")
+        if dmgCvar:GetBool() then return end
+
+        local eatsounds = {"ambient/materials/door_hit1.wav", "ambient/materials/metal_groan.wav"}
+
+        function ENT:Think()
+            if self.DieAt < CurTime() then
+                self:Remove()
+
+                return
+            end
+
+            local pos = self:GetPos()
+            local valve_radius = self:GetRadius() * 18
+
+            for _, ent in pairs(ents.FindInSphere(pos, valve_radius)) do
+                local phys = ent:GetPhysicsObject()
+                local posdiff = -(ent:GetPos() - pos)
+                local dist = posdiff:Length()
+                posdiff:Normalize()
+
+                if ent:IsPlayer() then
+                    if ent:Alive() and not ent:IsSpec() then
+                        if dist < self:GetRadius() and 1 > 0 then
+                            ent:TakeDamage(math.random(1, 2), self:GetSpawner())
+                            self:IncrRadius(0.2)
+                            ent:EmitSound("ambient/energy/zap8.wav")
+                        else
+                            local force = posdiff * ((valve_radius - dist) / 25) * 45
+                            ent:SetVelocity(force)
+                        end
+                    end
+                elseif phys:IsValid() and not ent.WYOZIBHDontEat and self:IsGoodEnt(ent, phys) then
+                    if dist < self:GetRadius() * 0.75 and 1 then
+                        local effectdata = EffectData()
+                        effectdata:SetStart(ent:GetPos())
+                        effectdata:SetOrigin(self:GetPos()) -- end pos
+                        effectdata:SetEntity(ent)
+                        util.Effect("blackhole_eatent", effectdata)
+                        ent.WYOZIBHDontEat = true
+                        self:EmitSound(table.Random(eatsounds))
+
+                        timer.Simple(0.5, function()
+                            if ent:IsValid() then
+                                ent:Remove()
+                            end
+                        end)
+
+                        self:IncrRadius(1.5)
+                        self.DieAt = self.DieAt + 0.1
+                    end
+                end
+            end
+
+            self:NextThink(CurTime() + 0.1)
+
+            return true
+        end
     end
 end)
