@@ -19,6 +19,7 @@ local verisonUpdateSpamCvar = CreateConVar("ttt_tweaks_simfphys_lvs_update_messa
 
 local tipsCvar = CreateConVar("ttt_tweaks_tips", "1", FCVAR_REPLICATED, "Whether TTT tips are enabled that show at the bottom of the screen while dead")
 local pickupPromptCvar = CreateConVar("ttt_tweaks_pickup_prompt", "1", FCVAR_REPLICATED, "Whether a 'Press E to pickup' prompt appears when looking closely at a weapon that can be picked up in that way")
+local disableNotificationSoundCvar = CreateConVar("ttt_tweaks_force_off_notification_sound", "1", FCVAR_REPLICATED, "Whether the sound that plays when a notification appears in the top-right corner of the screen is forced off for all players")
 
 hook.Add("PostGamemodeLoaded", "StigTTTTweaks", function()
     -- Stopping the update now spam in the chat box from the vehicles base mod: LVS
@@ -115,6 +116,11 @@ if CLIENT then
                     draw.SimpleTextOutlined(text, "DermaLarge", ScrW() / 2, ScrH() / 1.8, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLOR_BLACK)
                 end
             end)
+        end
+
+        -- Disables the annoying notification sound for everyone
+        if ConVarExists("ttt_cl_msg_soundcue") and disableNotificationSoundCvar:GetBool() then
+            RunConsoleCommand("ttt_cl_msg_soundcue", 0)
         end
     end)
 end

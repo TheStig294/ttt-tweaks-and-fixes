@@ -63,6 +63,8 @@ ttt_tweaks_deathcam_thirdperson 1                   // Whether your camera views
 ttt_tweaks_dead_ringer_original_behaviour 1         // Whether the TTT2 version of the dead ringer should act like the original version by default
 
 ttt_tweaks_rmb_damage_reduction 0                   // Whether vanilla traitors take less damage from the red matter bomb, and vanilla jesters are immune
+
+ttt_tweaks_force_off_notification_sound 1           // Whether the sound that plays when a notification appears in the top-right corner of the screen is forced off for all players
 ```
 
 ## Steam Workshop Link
