@@ -143,6 +143,18 @@ Fixed becoming permanently invisible if handcuffed while using the cloak, added 
 Added convar to make the dead ringer behave exactly like the original version by default\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=3074845055>
 
+- "TTT Weeping Angel SWEP" by DatLycan\
+Fixed the weeping angel erroring whenever it is shot\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1346794275>
+
+- "[TTT] Jetpack" by HowdyImFate\
+Fixed the jetpack erroring on being spawned\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1735229517>
+
+- "D.Va mech w/English voice actor" by Zydel\
+Fixed the jetpack erroring on being spawned\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=942252663>
+
 ## Extra fixes
 
 The following mods were fixed without needing to change bits of their code.
@@ -198,7 +210,3 @@ Added option for the "No-one can hide from my sight" randomat to trigger after t
 - "TFA Base" by YuRaNnNzZZ\
 Added option to completely disable the TFA weapon inspect button as people accidentally press it and get stuck on the inspection screen\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
-
-- "Custom Chat" by StyledStrike\
-Fixed "Custom Chat" mod letting dead players speak with living players\
-<https://steamcommunity.com/sharedfiles/filedetails/?id=2799307109>

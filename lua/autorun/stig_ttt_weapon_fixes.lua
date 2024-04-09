@@ -960,5 +960,139 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
                 self:Remove()
             end
         end
+    elseif class == "weepingangel" then
+        -- Fixes the weeping angel erroring whenever it is shot
+        function ENT:DrawKnife(vec)
+            self:SetModel("models/The_Sniper_9/DoctorWho/Extras/Angels/angelattack.mdl")
+            vec.z = 0
+            vec:Normalize()
+            local knifepos = self:GetPos() + vec * self.Width + Vector(0, 0, 0.5 * self.Width)
+            self.Knife = ents.Create("prop_physics")
+            self.Knife:SetPos(knifepos)
+            self.Knife:SetModel("models/weapons/w_knife_t.mdl")
+            self.Knife:SetAngles(vec:Angle())
+            self.Knife:Spawn()
+            self.Knife:SetColor(Color(0, 0, 0, 0))
+            self.Knife:SetParent(self)
+        end
+    elseif class == "sent_jetpack" then
+        -- Fixes the jetpack erroring on being spawned
+        DEFINE_BASECLASS("base_predictedent")
+
+        function ENT:Initialize()
+            if self.SetSlotName then
+                self:SetSlotName(self:GetClass())
+            end
+
+            BaseClass.Initialize(self)
+
+            if SERVER then
+                self:SetModel("models/thrusters/jetpack.mdl")
+                self:InitPhysics()
+                self:SetMaxHealth(GetConVar("JetpackMaxHealth"):GetInt())
+                self:SetHealth(self:GetMaxHealth())
+                self:SetInfiniteFuel(GetConVar("UseInfiniteFuel"):GetBool())
+                self:SetMaxFuel(GetConVar("MaxJetPackFuel"):GetInt())
+                self:SetFuel(self:GetMaxFuel())
+                self:SetFuelDrain(GetConVar("JetPackDrainRate"):GetInt()) --drain in seconds
+                self:SetFuelRecharge(GetConVar("JetPackRefuelRate"):GetInt()) --recharge in seconds
+                self:SetActive(false)
+                self:SetGoneApeshit(math.random(0, 100) > 95) --little chance that on spawn we're gonna be crazy!
+                self:SetGoneApeshitTime(0)
+                self:SetCanStomp(false)
+                self:SetDoGroundSlam(false)
+                self:SetAirResistance(2.5)
+                self:SetRemoveGravity(false)
+                self:SetJetpackSpeed(224)
+                self:SetJetpackStrafeSpeed(600)
+                self:SetJetpackVelocity(1200)
+                self:SetJetpackStrafeVelocity(1200)
+            else
+                self:SetLastActive(false)
+                self:SetWingClosure(0)
+                self:SetWingClosureStartTime(0)
+                self:SetWingClosureEndTime(0)
+                self:SetNextParticle(0)
+                self:SetNextFlameTrace(0)
+                self:SetLastFlameTrace(nil)
+            end
+        end
+
+        function ENT:OnInitPhysics(physobj)
+            if IsValid(physobj) then
+                physobj:SetMass(75)
+            end
+
+            self:SetCollisionGroup(COLLISION_GROUP_NONE)
+        end
+    elseif class == "d.va_mech" then
+        -- Fixes the D.Va mech erroring on activating self-destruct
+        function ENT:Self_Destruct()
+            if self:GetNWFloat("UltiCharge", 0) + self.UltiChargeSave < 1000 then return end
+            self:SetModel("models/Pichachu/overwatch/mech2.mdl")
+            self:SetPos(self:GetPos() + Vector(0, 0, 1))
+            local effectdata = EffectData()
+            effectdata:SetEntity(self)
+            effectdata:SetScale(1)
+            util.Effect("Dva_mech_Self_Destruct_Main", effectdata)
+            self.SystemOff = true
+            self.UltiSaveActivator = self.Activator
+
+            for i = 1, 10 do
+                timer.Simple((i - 1) * 0.3, function()
+                    if not IsValid(self) then return end
+                    local effectdata2 = EffectData()
+                    effectdata2:SetEntity(self)
+                    effectdata2:SetScale(i)
+                    util.Effect("Dva_mech_Self_Destruct", effectdata)
+                end)
+            end
+
+            local SaveAc = self.Activator
+            local SaveSe = self
+
+            timer.Simple(3.5, function()
+                if not IsValid(self) then return end
+                local effectdata2 = EffectData()
+                effectdata2:SetEntity(self)
+                effectdata2:SetScale(1)
+                effectdata2:SetOrigin(self:GetPos())
+                util.Effect("Dva_mech_Self_Destruct_Main_", effectdata2)
+                util.BlastDamage(SaveSe, SaveAc, self:GetPos(), 1500, 3000)
+                self:Remove()
+            end)
+
+            self:SetNWFloat("UltiCharge", 0)
+            self:SetNWBool("UltiChargeBool", true)
+            local activator = self.Activator
+            activator:EmitSound("Skill/self_d.mp3", 500, 100, 1, CHAN_WEAPON)
+            self:EmitSound("Skill/Ultimate2.mp3", 500, 100, 1, CHAN_WEAPON)
+            drive.PlayerStopDriving(activator)
+            activator.DvaMechCollid = self
+            self.DvaMechCollid = self
+            activator:SetEyeAngles(self:GetAngles())
+            activator:SetNWEntity("DvaMech", false)
+
+            timer.Simple(1, function()
+                if not IsValid(self) then return end
+                activator.DvaMechCollid = nil
+                self.DvaMechCollid = nil
+            end)
+
+            activator:SetParent(NULL)
+            activator:SetPos(self:GetPos())
+            self.Activator = NULL
+            self.DriveTime = CurTime() + 1
+            self:SetNWEntity("Activator", NULL)
+            activator:SetNoDraw(false)
+
+            timer.Simple(0.1, function()
+                if not IsValid(self) then return end
+                local Seq = self:LookupSequence("walk_SMG1_Relaxed_all")
+                self:SetSequence(Seq)
+                self:ResetSequence(Seq)
+                self:SetPlaybackRate(2)
+            end)
+        end
     end
 end)
