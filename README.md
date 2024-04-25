@@ -179,10 +179,6 @@ Fixed rocket thruster using wrong HUD slot and its internal name as its display 
 Fixed headcrab launcher's name being too long\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2068059005>
 
-- "Mario Mushroom" by Matrix\
-Fixed mario mushroom's name being too long\
-<https://steamcommunity.com/sharedfiles/filedetails/?id=2813468706>
-
 - "Immortality Potion" by Malivil\
 Fix immortality potion's name being too long\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2593566065>

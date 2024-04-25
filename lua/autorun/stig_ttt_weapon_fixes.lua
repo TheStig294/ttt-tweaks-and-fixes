@@ -16,9 +16,6 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
     elseif class == "weapon_ttt_mc_immortpotion" then
         -- Fix immortality potion's name being too long
         SWEP.PrintName = "Immortality Pot."
-    elseif class == "giantsupermariomushroom" then
-        -- Fix mario mushroom's name being too long
-        SWEP.PrintName = "Mario Mushroom"
     elseif class == "weapon_ttt_headlauncher" then
         -- Fix headcrab launcher's name being too long
         SWEP.PrintName = "Headcrab Launcher"

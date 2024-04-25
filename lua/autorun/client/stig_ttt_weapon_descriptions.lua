@@ -8,11 +8,6 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponDescriptions", function(SWEP, class)
             type = "Weapon",
             desc = "On use, turns random props around the map into hostile mimic props. \n\nThey jump towards and damage players on touch!"
         }
-    elseif class == "giantsupermariomushroom" then
-        SWEP.EquipMenuData = {
-            type = "Weapon",
-            desc = "One use, gain a lot of health and become huge for " .. GetConVar("ttt_giantsupermariomushroom_duration"):GetInt() .. " seconds!"
-        }
     elseif class == "weapon_amongussummoner" then
         SWEP.EquipMenuData = {
             type = "Weapon",
