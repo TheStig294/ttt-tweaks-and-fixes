@@ -744,5 +744,153 @@ hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, cl
 
             return true
         end
+    elseif class == "bruhbunker_shield" then
+        -- Making the bruh bunker make a "bruh" sound on being triggered
+        function ENT:Initialize()
+            self:EmitSound("stig_ttt_tweaks_and_fixes/bruh.mp3")
+        end
     end
+end)
+
+-- 
+-- 
+-- Passive item tweaks -------------------------------------------------------------------------------------------------------------------------------------------------
+-- 
+-- 
+hook.Add("InitPostEntity", "StigSpecialWeaponChangesPassives", function()
+    -- Bruh bunker is annoying and adds itself in an InitPostEntity hook, different to any other passive item on the workshop...
+    -- So put the modification in a 0 second timer to ensure this gets run after the bruh bunker gets added to the EquipmentItems table
+    local bruhBunkerCvar = CreateConVar("ttt_tweaks_bruhbunker_sound_hud_icon", 1, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the bruh bunker should show a HUD icon on being bought, and play a 'Bruh' sound effect on triggering")
+
+    if not bruhBunkerCvar:GetBool() then return end
+
+    timer.Simple(0, function()
+        if EQUIP_BUNKER then
+            for _, equTable in pairs(EquipmentItems) do
+                for _, equ in ipairs(equTable) do
+                    -- Bruh Bunker
+                    if equ.id == EQUIP_BUNKER then
+                        if CLIENT then
+                            LANG.AddToLanguage("english", "bunker_name", "Bruh Bunker")
+                            LANG.AddToLanguage("english", "bunker_desc", "Creates a bunker around you after taking bullet damage.")
+                            LANG.AddToLanguage("english", "bunker_alert", "Cringe Breach Detected! An Emergency Bruh Bunker has been activated!")
+                        end
+
+                        equ.name = "bunker_name"
+                        equ.desc = "bunker_desc"
+                        equ.hud = true
+
+                        -- Fixing the bug where the jester shooting you, and similar 0 damage events, triggers the bruh bunker even though damage wasn't taken
+                        hook.Add("PostEntityTakeDamage", "bruhbunkeractivation", function(target, dmginfo, took)
+                            -- All it takes is adding the "took and" check here...
+                            if took and (target:IsPlayer() and target.cringealert and not deployed and dmginfo:IsBulletDamage()) then
+                                target.cringealert = false
+                                local gren = ents.Create("bruhbunker_shield")
+                                gren:SetPos(target:GetPos())
+                                gren:SetOwner(target)
+                                gren:SetThrower(target)
+                                gren:Spawn()
+                                gren:SetDetonateExact(CurTime())
+
+                                timer.Create("bruhbunkerdiscombob", 0.7, 1, function()
+                                    local ent = ents.Create("prop_physics")
+                                    ent:SetModel("models/props_phx/misc/bunker01.mdl")
+                                    ent:SetPos(target:GetPos() - Vector(0, 0, 3))
+                                    local ea = target:EyeAngles()
+                                    ent:SetAngles(Angle(0, ea.yaw + 275, 0))
+                                    ent.warntime = CurTime() + 10
+                                    ent.removetime = CurTime() + 15
+                                    ent.bunkeractivater = target
+                                    ent:Spawn()
+                                    table.insert(activebunkers, ent)
+                                    ent:EmitSound("zap_spawn")
+                                    local physobj = ent:GetPhysicsObject()
+
+                                    if physobj:IsValid() then
+                                        physobj:EnableMotion(false)
+                                        physobj:Sleep(false)
+                                    end
+
+                                    -- Also making the alert message translatable
+                                    BroadcastLua("chat.AddText(LANG.GetTranslation(\"bunker_alert\"))")
+                                end)
+                            end
+                        end)
+
+                        -- Adding a local sound effect and HUD icon to actually indicate you've bought the bruh bunker
+                        hook.Add("TTTOrderedEquipment", "bruhbunkercringealert", function(ply, equipment, is_item)
+                            if equipment == EQUIP_BUNKER then
+                                ply.cringealert = true
+                                ply:SendLua("surface.PlaySound(\"stig_ttt_tweaks_and_fixes/bruh.mp3\")")
+                                ply:SetNWBool("TTTBruhBunker", true)
+                            end
+                        end)
+
+                        hook.Add("TTTPrepareRound", "bruhbunkerreset", function()
+                            for _, ply in player.Iterator() do
+                                ply:SetNWBool("TTTBruhBunker", false)
+                            end
+                        end)
+
+                        if CLIENT then
+                            -- HUD icon
+                            -- feel for to use this function for your own perk, but please credit Zaratusa
+                            -- your perk needs a "hud = true" in the table, to work properly
+                            local defaultY = ScrH() / 2 + 20
+                            local client = LocalPlayer()
+
+                            local function getYCoordinate(currentPerkID)
+                                local amount, i, perk = 0, 1
+                                client = client or LocalPlayer()
+
+                                while i < currentPerkID do
+                                    local role = client:GetRole()
+                                    perk = GetEquipmentItem(role, i)
+
+                                    if not perk then
+                                        perk = GetEquipmentItem(ROLE_TRAITOR, i)
+
+                                        if not perk then
+                                            perk = GetEquipmentItem(ROLE_DETECTIVE, i)
+                                        end
+                                    end
+
+                                    if istable(perk) and perk.hud and client:HasEquipmentItem(perk.id) then
+                                        amount = amount + 1
+                                    end
+
+                                    if CRVersion and CRVersion("2.1.2") then
+                                        i = i + 1
+                                    else
+                                        i = i * 2
+                                    end
+                                end
+
+                                return defaultY - 80 * amount
+                            end
+
+                            local yCoordinate = defaultY
+
+                            -- best performance, but the has about 0.5 seconds delay to the HasEquipmentItem() function
+                            hook.Add("TTTBoughtItem", "bruhbunkericon", function()
+                                if client:HasEquipmentItem(EQUIP_BUNKER) then
+                                    yCoordinate = getYCoordinate(EQUIP_BUNKER)
+                                end
+                            end)
+
+                            local material = Material("materials/vgui/ttt/ttt_bruhbunker_hud.png")
+
+                            hook.Add("HUDPaint", "TTTBruhBunkerIcon", function()
+                                if client:GetNWBool("TTTBruhBunker") and client:HasEquipmentItem(EQUIP_BUNKER) then
+                                    surface.SetMaterial(material)
+                                    surface.SetDrawColor(255, 255, 255, 255)
+                                    surface.DrawTexturedRect(20, yCoordinate, 64, 64)
+                                end
+                            end)
+                        end
+                    end
+                end
+            end
+        end
+    end)
 end)

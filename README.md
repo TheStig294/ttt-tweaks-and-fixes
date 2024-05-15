@@ -65,6 +65,8 @@ ttt_tweaks_dead_ringer_original_behaviour 1         // Whether the TTT2 version 
 ttt_tweaks_rmb_damage_reduction 0                   // Whether vanilla traitors take less damage from the red matter bomb, and vanilla jesters are immune
 
 ttt_tweaks_force_off_notification_sound 1           // Whether the sound that plays when a notification appears in the top-right corner of the screen is forced off for all players
+
+ttt_tweaks_bruhbunker_sound_hud_icon 1              // Whether the bruh bunker should show a HUD icon on being bought, and play a 'Bruh' sound effect on triggering
 ```
 
 ## Steam Workshop Link
@@ -154,6 +156,13 @@ Fixed the jetpack erroring on being spawned\
 - "D.Va mech w/English voice actor" by Zydel\
 Fixed the jetpack erroring on being spawned\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=942252663>
+
+- "FiresTTT - Detective Bruh Bunker" by Sam\
+Added a HUD icon to indicate the bruh bunker being bought, added a local "bruh" sound on being bought and a global "bruh" sound on triggering\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=942252663>
+
+- HUD icon system originally created by Zaratusa
+Modified by me to work with Custom Role's changes to passive items
 
 ## Extra fixes
 
