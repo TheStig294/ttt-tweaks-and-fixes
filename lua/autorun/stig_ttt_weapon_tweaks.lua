@@ -772,18 +772,33 @@ hook.Add("InitPostEntity", "StigSpecialWeaponChangesPassives", function()
                     if equ.id == EQUIP_BUNKER then
                         if CLIENT then
                             LANG.AddToLanguage("english", "bunker_name", "Bruh Bunker")
-                            LANG.AddToLanguage("english", "bunker_desc", "Creates a bunker around you after taking bullet damage.")
+                            LANG.AddToLanguage("english", "bunker_desc", "Creates a bunker around you after taking damage from another player")
                             LANG.AddToLanguage("english", "bunker_alert", "Cringe Breach Detected! An Emergency Bruh Bunker has been activated!")
+                            LANG.AddToLanguage("english", "bunker_warning", "You have 5 seconds left of your Bruh Bunker.")
+                            LANG.AddToLanguage("english", "bunker_expire", "Your Bruh Bunker has expired.")
                         end
 
                         equ.name = "bunker_name"
                         equ.desc = "bunker_desc"
                         equ.hud = true
 
+                        hook.Add("TTTPrepareRound", "removetimers", function()
+                            for _, ply in player.Iterator() do
+                                ply:SetNWBool("TTTBruhBunker", false)
+                                ply.cringealert = false
+                            end
+
+                            timer.Remove("bruhbunkerdiscombob")
+                        end)
+
+                        hook.Remove("Think", "bruhbunkertimer")
                         -- Fixing the bug where the jester shooting you, and similar 0 damage events, triggers the bruh bunker even though damage wasn't taken
+                        hook.Remove("EntityTakeDamage", "bruhbunkeractivation")
+
                         hook.Add("PostEntityTakeDamage", "bruhbunkeractivation", function(target, dmginfo, took)
-                            -- All it takes is adding the "took and" check here...
-                            if took and (target:IsPlayer() and target.cringealert and not deployed and dmginfo:IsBulletDamage()) then
+                            -- Adding the "took and" check here, and making this a PostEntityTakeDamage hook rather than EntityTakeDamage
+                            -- Also only triggering the bruh bunker if we are sure this is damage dealt by another player
+                            if took and target:IsPlayer() and target.cringealert and IsValid(dmginfo:GetAttacker()) and dmginfo:GetAttacker():IsPlayer() then
                                 target.cringealert = false
                                 local gren = ents.Create("bruhbunker_shield")
                                 gren:SetPos(target:GetPos())
@@ -793,18 +808,18 @@ hook.Add("InitPostEntity", "StigSpecialWeaponChangesPassives", function()
                                 gren:SetDetonateExact(CurTime())
 
                                 timer.Create("bruhbunkerdiscombob", 0.7, 1, function()
-                                    local ent = ents.Create("prop_physics")
-                                    ent:SetModel("models/props_phx/misc/bunker01.mdl")
-                                    ent:SetPos(target:GetPos() - Vector(0, 0, 3))
-                                    local ea = target:EyeAngles()
-                                    ent:SetAngles(Angle(0, ea.yaw + 275, 0))
-                                    ent.warntime = CurTime() + 10
-                                    ent.removetime = CurTime() + 15
-                                    ent.bunkeractivater = target
-                                    ent:Spawn()
-                                    table.insert(activebunkers, ent)
-                                    ent:EmitSound("zap_spawn")
-                                    local physobj = ent:GetPhysicsObject()
+                                    -- Also check for the target player being valid here since this is a timer
+                                    if not IsValid(target) then return end
+                                    -- And remove their HUD icon for the bruh bunker since it is now used
+                                    target:SetNWBool("TTTBruhBunker", false)
+                                    local bunker = ents.Create("prop_physics")
+                                    bunker:SetModel("models/props_phx/misc/bunker01.mdl")
+                                    bunker:SetPos(target:GetPos() - Vector(0, 0, 3))
+                                    local angles = target:EyeAngles()
+                                    bunker:SetAngles(Angle(0, angles.yaw + 275, 0))
+                                    bunker:Spawn()
+                                    bunker:EmitSound("zap_spawn")
+                                    local physobj = bunker:GetPhysicsObject()
 
                                     if physobj:IsValid() then
                                         physobj:EnableMotion(false)
@@ -813,6 +828,23 @@ hook.Add("InitPostEntity", "StigSpecialWeaponChangesPassives", function()
 
                                     -- Also making the alert message translatable
                                     BroadcastLua("chat.AddText(LANG.GetTranslation(\"bunker_alert\"))")
+
+                                    timer.Simple(10, function()
+                                        if IsValid(target) then
+                                            target:SendLua("chat.AddText(LANG.GetTranslation(\"bunker_warning\"))")
+                                        end
+                                    end)
+
+                                    timer.Simple(15, function()
+                                        if IsValid(target) then
+                                            target:SendLua("chat.AddText(LANG.GetTranslation(\"bunker_expire\"))")
+                                        end
+
+                                        if IsValid(bunker) then
+                                            bunker:EmitSound("zap_despawn")
+                                            bunker:Remove()
+                                        end
+                                    end)
                                 end)
                             end
                         end)
@@ -823,12 +855,6 @@ hook.Add("InitPostEntity", "StigSpecialWeaponChangesPassives", function()
                                 ply.cringealert = true
                                 ply:SendLua("surface.PlaySound(\"stig_ttt_tweaks_and_fixes/bruh.mp3\")")
                                 ply:SetNWBool("TTTBruhBunker", true)
-                            end
-                        end)
-
-                        hook.Add("TTTPrepareRound", "bruhbunkerreset", function()
-                            for _, ply in player.Iterator() do
-                                ply:SetNWBool("TTTBruhBunker", false)
                             end
                         end)
 
