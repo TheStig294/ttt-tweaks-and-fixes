@@ -12,9 +12,7 @@ Copy the below into your server's server.cfg, or to your local Gmod install's li
 ttt_tweaks_remington_damage 35                       // Various buffs to underpowered floor weapons, you can change the buffs here (or nerf the weapons instead!)
 ttt_tweaks_vector_recoil 0.7
 ttt_tweaks_pocket_damage 75
-ttt_tweaks_pp19_firedelay 0.05
-ttt_tweaks_pp19_damage 7
-ttt_tweaks_pp19_recoil 1.2
+ttt_tweaks_pp_19_damage 8
 ttt_tweaks_p228_recoil 25
 ttt_tweaks_t38_damage 65
 ttt_tweaks_g3sg1_damage 30

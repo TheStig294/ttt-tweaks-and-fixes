@@ -18,17 +18,9 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
     elseif class == "weapon_ap_pp19" then
-        local firedelayCvar = CreateConVar("ttt_tweaks_pp19_firedelay", 0.05, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Fire delay of the PP19 gun")
-
-        SWEP.Primary.Delay = firedelayCvar:GetFloat()
-
-        local damageCvar = CreateConVar("ttt_tweaks_pp19_damage", 7, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the PP19 gun")
+        local damageCvar = CreateConVar("ttt_tweaks_pp_19_damage", 8, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the PP19 gun")
 
         SWEP.Primary.Damage = damageCvar:GetFloat()
-
-        local recoilCvar = CreateConVar("ttt_tweaks_pp19_recoil", 1.2, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Recoil of the PP19 gun")
-
-        SWEP.Primary.Recoil = recoilCvar:GetFloat()
     elseif class == "weapon_ttt_p228" then
         local damageCvar = CreateConVar("ttt_tweaks_p228_recoil", 25, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the P228 gun")
 
