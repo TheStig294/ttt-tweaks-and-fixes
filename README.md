@@ -65,6 +65,8 @@ ttt_tweaks_rmb_damage_reduction 0                   // Whether vanilla traitors 
 ttt_tweaks_force_off_notification_sound 1           // Whether the sound that plays when a notification appears in the top-right corner of the screen is forced off for all players
 
 ttt_tweaks_bruhbunker_sound_hud_icon 1              // Whether the bruh bunker should show a HUD icon on being bought, and play a 'Bruh' sound effect on triggering
+
+ttt_tweaks_cr_m9k_dbarrel 0                         // Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles
 ```
 
 ## Steam Workshop Link
