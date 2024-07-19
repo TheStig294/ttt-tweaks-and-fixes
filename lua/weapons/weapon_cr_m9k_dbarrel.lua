@@ -1,17 +1,15 @@
 -- Taken from Malivil's [TTT] M9K Weapons (Fixed) mod at their request for this feature:
 -- https://steamcommunity.com/sharedfiles/filedetails/?id=3025019026
 
--- The model and sounds are packaged with CR4TTT so that is required
-if not CR_VERSION or not CRVersion("2.1.18") then return end
-
 local enabledCvar = CreateConVar("ttt_tweaks_cr_m9k_dbarrel", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles", 0, 1)
 
-if not enabledCvar:GetBool() then return end
+hook.Add("PreRegisterSWEP", "DB_PreRegisterSWEP", function(weap, class)
+    if class ~= "weapon_cr_m9k_dbarrel" then return end
 
--- Code has been immensely cleaned up...
-if SERVER then
-    resource.AddFile("materials/vgui/ttt/dbarrel.png")
-end
+    -- The model and sounds are packaged with CR4TTT so that is required
+    if not CR_VERSION or not CRVersion("2.1.18") then return false end
+    if not enabledCvar:GetBool() then return false end
+end)
 
 SWEP.Gun = "m9k_dbarrel"
 SWEP.Category = "M9K Shotguns"
@@ -34,7 +32,6 @@ SWEP.AutoSwitchFrom = true
 SWEP.HoldType = "shotgun"
 SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
-SWEP.Icon = "materials/vgui/ttt/dbarrel.png"
 SWEP.Base = "weapon_tttbase"
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = true
