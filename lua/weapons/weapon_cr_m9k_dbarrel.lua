@@ -4,7 +4,7 @@
 -- The model and sounds are packaged with CR4TTT so that is required
 if not CR_VERSION or not CRVersion("2.1.18") then return false end
 
-local enabledCvar = CreateConVar("ttt_tweaks_cr_m9k_dbarrel", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles (Requires map change for changes to take affect)", 0, 1)
+local enabledCvar = CreateConVar("ttt_tweaks_cr_m9k_dbarrel", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles (Requires map change for changes to take effect)", 0, 1)
 
 if not enabledCvar:GetBool() then return end
 SWEP.Gun = "m9k_dbarrel"
