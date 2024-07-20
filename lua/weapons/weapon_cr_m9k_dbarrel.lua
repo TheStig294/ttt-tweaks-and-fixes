@@ -1,16 +1,12 @@
 -- Taken from Malivil's [TTT] M9K Weapons (Fixed) mod at their request for this feature:
 -- https://steamcommunity.com/sharedfiles/filedetails/?id=3025019026
+-- 
+-- The model and sounds are packaged with CR4TTT so that is required
+if not CR_VERSION or not CRVersion("2.1.18") then return false end
 
-local enabledCvar = CreateConVar("ttt_tweaks_cr_m9k_dbarrel", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles", 0, 1)
+local enabledCvar = CreateConVar("ttt_tweaks_cr_m9k_dbarrel", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles (Requires map change for changes to take affect)", 0, 1)
 
-hook.Add("PreRegisterSWEP", "DB_PreRegisterSWEP", function(weap, class)
-    if class ~= "weapon_cr_m9k_dbarrel" then return end
-
-    -- The model and sounds are packaged with CR4TTT so that is required
-    if not CR_VERSION or not CRVersion("2.1.18") then return false end
-    if not enabledCvar:GetBool() then return false end
-end)
-
+if not enabledCvar:GetBool() then return end
 SWEP.Gun = "m9k_dbarrel"
 SWEP.Category = "M9K Shotguns"
 SWEP.Author = ""
@@ -65,7 +61,6 @@ SWEP.SightsPos = Vector(0, 0, 0)
 SWEP.SightsAng = Vector(0, 0, 0)
 SWEP.RunSightsPos = Vector(11.475, -7.705, -2.787)
 SWEP.RunSightsAng = Vector(0.574, 51.638, 5.737)
-
 -- Other than code cleanup, the only changes are these lines, so the double barrel can exist with just Custom Roles installed
 SWEP.Primary.Sound = "weapons/ttt/dbsingle.wav"
 SWEP.ViewModel = "models/weapons/v_old_doublebarrel.mdl"
