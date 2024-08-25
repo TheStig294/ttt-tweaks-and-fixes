@@ -611,6 +611,19 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
                 wep:EmitSound(snd, 100, 100, 1, CHAN_STATIC)
             end)
         end
+    elseif class == "weapon_dr2_remote" then
+        -- Changing model of the drone controller weapon to not use a Wii controller model
+        local modelCvar = CreateConVar("ttt_tweaks_drone_controller_tool_gun_model", 1, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether to change the model of the drone controller weapon to the tool gun model")
+
+        if not modelCvar:GetBool() then return end
+        SWEP.ViewModel = "models/weapons/c_toolgun.mdl"
+        SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
+
+        function SWEP:Deploy()
+            self:SendWeaponAnim(ACT_VM_DRAW)
+
+            return true
+        end
     end
 end)
 

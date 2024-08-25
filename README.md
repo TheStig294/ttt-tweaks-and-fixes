@@ -67,6 +67,8 @@ ttt_tweaks_force_off_notification_sound 1           // Whether the sound that pl
 ttt_tweaks_bruhbunker_sound_hud_icon 1              // Whether the bruh bunker should show a HUD icon on being bought, and play a 'Bruh' sound effect on triggering
 
 ttt_tweaks_cr_m9k_dbarrel 0                         // Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles
+
+ttt_tweaks_drone_controller_tool_gun_model 1        // Whether to change the model of the "Drone Controller" weapon to the tool gun model
 ```
 
 ## Steam Workshop Link
