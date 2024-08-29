@@ -715,6 +715,7 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
             toucher:Freeze(true)
             self:Remove()
             self:EmitSound("shark_trap.mp3", 100, 100, 1)
+            local attacker = self:GetPlacer()
 
             timer.Simple(1.6, function()
                 local effectData = EffectData()
@@ -735,10 +736,15 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
                 --- Dmg Info ---
                 local dmg = DamageInfo()
                 local inflictor = ents.Create("ttt_shark_trap")
-                dmg:SetAttacker(toucher)
+
+                if not IsValid(attacker) then
+                    attacker = toucher
+                end
+
+                dmg:SetAttacker(attacker)
                 dmg:SetInflictor(inflictor)
                 dmg:SetDamage(10000)
-                dmg:SetDamageType(DMG_CLUB)
+                dmg:SetDamageType(DMG_DROWN)
                 ------
                 toucher:TakeDamageInfo(dmg)
                 toucher:Freeze(false)
