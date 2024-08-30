@@ -718,6 +718,7 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
             local attacker = self:GetPlacer()
 
             timer.Simple(1.6, function()
+                if not IsValid(toucher) then return end
                 local effectData = EffectData()
                 effectData:SetOrigin(toucher:GetPos())
                 effectData:SetScale(20)
