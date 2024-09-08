@@ -116,7 +116,7 @@ Fixed missing valid player check lua error\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1978094981>
 
 - "Time Manipulator" by Tony_Bamanabon\
-Fixed various lua errors\
+Fixed various lua errors and using wrong slot number\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1318271171>
 
 - "Homerun Bat" by Hagen\

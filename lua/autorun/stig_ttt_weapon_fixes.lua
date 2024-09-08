@@ -215,29 +215,10 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
             end
         end)
     elseif class == "weapons_ttt_time_manipulator" then
+        -- Fix using wrong slot number (Weapon kind is WEAPON_EQUIP1)
+        SWEP.Slot = 6
+
         -- Fixes lua errors with the time manipulator
-        function SWEP:SecondaryAttack()
-            if not self:CanPrimaryAttack() then return end
-            self:TakePrimaryAmmo(1)
-            self:SetNextPrimaryFire(CurTime() + 30)
-            self:SetNextSecondaryFire(CurTime() + 30)
-            self:GetOwner():PrintMessage(HUD_PRINTTALK, "Sped up time!")
-
-            if SERVER then
-                game.SetTimeScale(GetConVar("tm_speedup"):GetFloat())
-            end
-
-            timer.Simple(30, function()
-                if SERVER then
-                    game.SetTimeScale(1)
-                end
-
-                if IsValid(self) and IsPlayer(self:GetOwner()) then
-                    self:GetOwner():PrintMessage(HUD_PRINTTALK, "Slowed down time!")
-                end
-            end)
-        end
-
         function SWEP:PrimaryAttack()
             if not self:CanPrimaryAttack() then return end
             self:TakePrimaryAmmo(1)
@@ -256,6 +237,28 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
 
                 if IsValid(self) and IsPlayer(self:GetOwner()) then
                     self:GetOwner():PrintMessage(HUD_PRINTTALK, "Sped up time!")
+                end
+            end)
+        end
+
+        function SWEP:SecondaryAttack()
+            if not self:CanPrimaryAttack() then return end
+            self:TakePrimaryAmmo(1)
+            self:SetNextPrimaryFire(CurTime() + 30)
+            self:SetNextSecondaryFire(CurTime() + 30)
+            self:GetOwner():PrintMessage(HUD_PRINTTALK, "Sped up time!")
+
+            if SERVER then
+                game.SetTimeScale(GetConVar("tm_speedup"):GetFloat())
+            end
+
+            timer.Simple(30, function()
+                if SERVER then
+                    game.SetTimeScale(1)
+                end
+
+                if IsValid(self) and IsPlayer(self:GetOwner()) then
+                    self:GetOwner():PrintMessage(HUD_PRINTTALK, "Slowed down time!")
                 end
             end)
         end
