@@ -70,11 +70,6 @@ ttt_tweaks_cr_m9k_dbarrel 0                         // Whether to force the M9K 
 
 ttt_tweaks_drone_controller_tool_gun_model 1        // Whether to change the model of the "Drone Controller" weapon to the tool gun model
 ```
-
-## Steam Workshop Link
-
-<https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034>
-
 ## Credits
 
 'Happy Happy Game Show' Kevin MacLeod (incompetech.com)\
@@ -217,3 +212,6 @@ Added option for the "No-one can hide from my sight" randomat to trigger after t
 - "TFA Base" by YuRaNnNzZZ\
 Added option to completely disable the TFA weapon inspect button as people accidentally press it and get stuck on the inspection screen\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
+
+## Steam Workshop Link
+https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034
