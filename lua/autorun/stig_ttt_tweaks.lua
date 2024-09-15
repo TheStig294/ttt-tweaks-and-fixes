@@ -22,10 +22,10 @@ end)
 
 -- Server-only
 if SERVER then
+    -- Disables TFA inspect button
     local inspectCvar = CreateConVar("ttt_tweaks_tfa_inspect", "0", nil, "Whether inspecting TFA weapons is enabled")
 
     hook.Add("InitPostEntity", "StigTTTTweaks", function()
-        -- Disables TFA inspect button
         if ConVarExists("sv_tfa_cmenu") and not inspectCvar:GetBool() then
             RunConsoleCommand("sv_tfa_cmenu", 0)
         end
@@ -34,10 +34,10 @@ if SERVER then
         hook.Add("PlayerInitialSpawn", "SteamIDDisplay", function() end)
     end)
 
+    -- Triggers the "No-one can hide from my sight" randomat after there are so many minutes remaining"
     local wallhacksCvar = CreateConVar("ttt_tweaks_auto_trigger_wallhack_randomat", "0", nil, "Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable")
 
     hook.Add("TTTBeginRound", "StigTTTTweaks", function()
-        -- Triggers the "No-one can hide from my sight" randomat after there are so many minutes remaining"
         if wallhacksCvar:GetInt() == 0 then return end
 
         timer.Create("TTTTweaksAutoTriggerWallhacks", wallhacksCvar:GetInt(), 1, function()
@@ -49,6 +49,7 @@ if SERVER then
         timer.Remove("TTTTweaksAutoTriggerWallhacks")
     end)
 
+    -- Makes you camera go to a 3rd person view on dying rather than 1st person
     local deathcamThirdpersonCvar = CreateConVar("ttt_tweaks_deathcam_thirdperson", "1", nil, "Whether your camera views your body in third-person rather than first-person on dying")
 
     hook.Add("PostPlayerDeath", "StigTTTTweaks", function(ply)
