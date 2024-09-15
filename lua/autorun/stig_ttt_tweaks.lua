@@ -1,25 +1,9 @@
 -- Non-weapon tweaks to various mods on the workshop
 -- Weapon tweaks reside in stig_ttt_weapon_tweaks.lua
 if engine.ActiveGamemode() ~= "terrortown" then return end
--- Server convars
-local inspectCvar
-local wallhacksCvar
-local deathcamThirdpersonCvar
 
-if SERVER then
-    inspectCvar = CreateConVar("ttt_tweaks_tfa_inspect", "0", nil, "Whether inspecting TFA weapons is enabled")
-    wallhacksCvar = CreateConVar("ttt_tweaks_auto_trigger_wallhack_randomat", "0", nil, "Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable")
-    deathcamThirdpersonCvar = CreateConVar("ttt_tweaks_deathcam_thirdperson", "1", nil, "Whether your camera views your body in third-person rather than first-person on dying")
-end
-
--- Replicated convars
-local damagenumbersCvar = CreateConVar("ttt_tweaks_better_damagenumber_default", "1", FCVAR_REPLICATED, "Whether the TF2 damage numbers mod is forced to better-looking defaults on the client")
-
+-- Server and client
 local verisonUpdateSpamCvar = CreateConVar("ttt_tweaks_simfphys_lvs_update_message", "0", {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Whether the simfphys/LVS mods should show 'A newer version is available!' messages in chat")
-
-local tipsCvar = CreateConVar("ttt_tweaks_tips", "1", FCVAR_REPLICATED, "Whether TTT tips are enabled that show at the bottom of the screen while dead")
-local pickupPromptCvar = CreateConVar("ttt_tweaks_pickup_prompt", "1", FCVAR_REPLICATED, "Whether a 'Press E to pickup' prompt appears when looking closely at a weapon that can be picked up in that way")
-local disableNotificationSoundCvar = CreateConVar("ttt_tweaks_force_off_notification_sound", "1", FCVAR_REPLICATED, "Whether the sound that plays when a notification appears in the top-right corner of the screen is forced off for all players")
 
 hook.Add("PostGamemodeLoaded", "StigTTTTweaks", function()
     -- Stopping the update now spam in the chat box from the vehicles base mod: LVS
@@ -36,7 +20,10 @@ hook.Add("PostGamemodeLoaded", "StigTTTTweaks", function()
     end
 end)
 
+-- Server-only
 if SERVER then
+    local inspectCvar = CreateConVar("ttt_tweaks_tfa_inspect", "0", nil, "Whether inspecting TFA weapons is enabled")
+
     hook.Add("InitPostEntity", "StigTTTTweaks", function()
         -- Disables TFA inspect button
         if ConVarExists("sv_tfa_cmenu") and not inspectCvar:GetBool() then
@@ -46,6 +33,8 @@ if SERVER then
         -- Removes the "Ben is awesome" chat message spam from Jenson's Beenade weapon
         hook.Add("PlayerInitialSpawn", "SteamIDDisplay", function() end)
     end)
+
+    local wallhacksCvar = CreateConVar("ttt_tweaks_auto_trigger_wallhack_randomat", "0", nil, "Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable")
 
     hook.Add("TTTBeginRound", "StigTTTTweaks", function()
         -- Triggers the "No-one can hide from my sight" randomat after there are so many minutes remaining"
@@ -60,12 +49,20 @@ if SERVER then
         timer.Remove("TTTTweaksAutoTriggerWallhacks")
     end)
 
+    local deathcamThirdpersonCvar = CreateConVar("ttt_tweaks_deathcam_thirdperson", "1", nil, "Whether your camera views your body in third-person rather than first-person on dying")
+
     hook.Add("PostPlayerDeath", "StigTTTTweaks", function(ply)
         if deathcamThirdpersonCvar:GetBool() and ply:GetObserverMode() == OBS_MODE_IN_EYE then
             ply:SetObserverMode(OBS_MODE_CHASE)
         end
     end)
 end
+
+-- Client-only
+local tipsCvar = CreateConVar("ttt_tweaks_tips", "1", FCVAR_REPLICATED, "Whether TTT tips are enabled that show at the bottom of the screen while dead")
+local damagenumbersCvar = CreateConVar("ttt_tweaks_better_damagenumber_default", "1", FCVAR_REPLICATED, "Whether the TF2 damage numbers mod is forced to better-looking defaults on the client")
+local pickupPromptCvar = CreateConVar("ttt_tweaks_pickup_prompt", "1", FCVAR_REPLICATED, "Whether a 'Press E to pickup' prompt appears when looking closely at a weapon that can be picked up in that way")
+local disableNotificationSoundCvar = CreateConVar("ttt_tweaks_force_off_notification_sound", "1", FCVAR_REPLICATED, "Whether the sound that plays when a notification appears in the top-right corner of the screen is forced off for all players")
 
 if CLIENT then
     hook.Add("InitPostEntity", "StigTTTTweaks", function()
