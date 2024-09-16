@@ -159,7 +159,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         -- Make artillery cannon always red and not re-buyable
         local rebuyableCvar = CreateConVar("ttt_tweaks_artillery_rebuyable", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the artillery cannon is re-buyable or not")
 
-        SWEP.LimitedStock = rebuyableCvar:GetBool()
+        SWEP.LimitedStock = not rebuyableCvar:GetBool()
 
         local alwaysRedCvar = CreateConVar("ttt_tweaks_artillery_always_red", "1", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the artillery cannon should always be red")
 
