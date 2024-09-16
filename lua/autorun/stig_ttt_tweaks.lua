@@ -57,6 +57,39 @@ if SERVER then
             ply:SetObserverMode(OBS_MODE_CHASE)
         end
     end)
+
+    -- Forces barnacles to ignore players on the jester team
+    local barnaclesIgnoreJestersCvar = CreateConVar("ttt_tweaks_barnacles_ignore_jesters", "1", nil, "Whether to allow players on the jester team to be picked up by barnacles")
+
+    -- When a new barnacle is placed
+    hook.Add("OnEntityCreated", "TTTTweaksBarnacleIgnoreJesters", function(ent)
+        if not barnaclesIgnoreJestersCvar:GetBool() then return end
+
+        timer.Simple(0, function()
+            if IsValid(ent) and ent:GetClass() == "npc_barnacle" then
+                for _, ply in player.Iterator() do
+                    if ply.IsJesterTeam and ply:IsJesterTeam() then
+                        ent:AddEntityRelationship(ply, D_LI, 99)
+                    end
+                end
+            end
+        end)
+    end)
+
+    -- When a player becomes/stops being a jester role
+    hook.Add("TTTPlayerRoleChanged", "TTTTweaksBarnacleIgnoreJesters", function(ply, oldRole, newRole)
+        if not barnaclesIgnoreJestersCvar:GetBool() then return end
+
+        if JESTER_ROLES[oldRole] and not JESTER_ROLES[newRole] then
+            for _, barnacle in ipairs(ents.FindByClass("npc_barnacle")) do
+                barnacle:AddEntityRelationship(ply, D_HT, 99)
+            end
+        elseif JESTER_ROLES[newRole] and not JESTER_ROLES[oldRole] then
+            for _, barnacle in ipairs(ents.FindByClass("npc_barnacle")) do
+                barnacle:AddEntityRelationship(ply, D_LI, 99)
+            end
+        end
+    end)
 end
 
 -- Client-only

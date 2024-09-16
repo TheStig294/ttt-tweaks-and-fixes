@@ -69,7 +69,10 @@ ttt_tweaks_bruhbunker_sound_hud_icon 1              // Whether the bruh bunker s
 ttt_tweaks_cr_m9k_dbarrel 0                         // Whether to force the M9K double barrel shotgun to spawn as a floor weapon, but using the model and sounds from Custom Roles
 
 ttt_tweaks_drone_controller_tool_gun_model 1        // Whether to change the model of the "Drone Controller" weapon to the tool gun model
+
+ttt_tweaks_barnacles_ignore_jesters 1               // Whether to allow players on the jester team to be picked up by barnacles
 ```
+
 ## Credits
 
 'Happy Happy Game Show' Kevin MacLeod (incompetech.com)\
@@ -214,4 +217,4 @@ Added option to completely disable the TFA weapon inspect button as people accid
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
 
 ## Steam Workshop Link
-https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034
+<https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034>
