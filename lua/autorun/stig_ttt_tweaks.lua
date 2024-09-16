@@ -5,7 +5,7 @@ if engine.ActiveGamemode() ~= "terrortown" then return end
 -- Server and client
 local verisonUpdateSpamCvar = CreateConVar("ttt_tweaks_simfphys_lvs_update_message", "0", {FCVAR_REPLICATED, FCVAR_ARCHIVE}, "Whether the simfphys/LVS mods should show 'A newer version is available!' messages in chat")
 
-hook.Add("PostGamemodeLoaded", "StigTTTTweaks", function()
+hook.Add("PostGamemodeLoaded", "TTTTweaksDisableLVSUpdateMessage", function()
     -- Stopping the update now spam in the chat box from the vehicles base mod: LVS
     if (simfphys or LVS) and not verisonUpdateSpamCvar:GetBool() then
         if simfphys then
@@ -25,7 +25,7 @@ if SERVER then
     -- Disables TFA inspect button
     local inspectCvar = CreateConVar("ttt_tweaks_tfa_inspect", "0", nil, "Whether inspecting TFA weapons is enabled")
 
-    hook.Add("InitPostEntity", "StigTTTTweaks", function()
+    hook.Add("InitPostEntity", "TTTTweaksDisableTFAInspect", function()
         if ConVarExists("sv_tfa_cmenu") and not inspectCvar:GetBool() then
             RunConsoleCommand("sv_tfa_cmenu", 0)
         end
@@ -37,7 +37,7 @@ if SERVER then
     -- Triggers the "No-one can hide from my sight" randomat after there are so many minutes remaining"
     local wallhacksCvar = CreateConVar("ttt_tweaks_auto_trigger_wallhack_randomat", "0", nil, "Seconds into a round to trigger the 'No-one can hide from my sight' randomat, set to 0 to disable")
 
-    hook.Add("TTTBeginRound", "StigTTTTweaks", function()
+    hook.Add("TTTBeginRound", "TTTTweaksWallhacks", function()
         if wallhacksCvar:GetInt() == 0 then return end
 
         timer.Create("TTTTweaksAutoTriggerWallhacks", wallhacksCvar:GetInt(), 1, function()
@@ -45,14 +45,14 @@ if SERVER then
         end)
     end)
 
-    hook.Add("TTTEndRound", "StigTTTTweaks", function()
+    hook.Add("TTTEndRound", "TTTTweaksWallhacks", function()
         timer.Remove("TTTTweaksAutoTriggerWallhacks")
     end)
 
     -- Makes you camera go to a 3rd person view on dying rather than 1st person
     local deathcamThirdpersonCvar = CreateConVar("ttt_tweaks_deathcam_thirdperson", "1", nil, "Whether your camera views your body in third-person rather than first-person on dying")
 
-    hook.Add("PostPlayerDeath", "StigTTTTweaks", function(ply)
+    hook.Add("PostPlayerDeath", "TTTTweaks3rdPersonDeath", function(ply)
         if deathcamThirdpersonCvar:GetBool() and ply:GetObserverMode() == OBS_MODE_IN_EYE then
             ply:SetObserverMode(OBS_MODE_CHASE)
         end
@@ -66,7 +66,7 @@ local pickupPromptCvar = CreateConVar("ttt_tweaks_pickup_prompt", "1", FCVAR_REP
 local disableNotificationSoundCvar = CreateConVar("ttt_tweaks_force_off_notification_sound", "1", FCVAR_REPLICATED, "Whether the sound that plays when a notification appears in the top-right corner of the screen is forced off for all players")
 
 if CLIENT then
-    hook.Add("InitPostEntity", "StigTTTTweaks", function()
+    hook.Add("InitPostEntity", "TTTTweaksInitPostEntity", function()
         -- Disables tips text box for everyone
         if ConVarExists("ttt_tips_enable") and not tipsCvar:GetBool() then
             RunConsoleCommand("ttt_tips_enable", 0)
@@ -87,7 +87,7 @@ if CLIENT then
 
             -- Check for a pickup-able weapon in a timer, rather than in the HUD hook itself, 
             -- because HUD hooks are called very often and a 0.1 second timer is more than enough frequency for checking if a pickupable weapon is being looked at
-            timer.Create("StigTTTTweaksCheckForPickupableWeapon", 0.1, 0, function()
+            timer.Create("TTTTweaksCheckForPickupableWeapon", 0.1, 0, function()
                 local tr = client:GetEyeTrace()
                 local wep = tr.Entity
 
@@ -109,7 +109,7 @@ if CLIENT then
 
             local text = "Press " .. string.upper(input.LookupBinding("+use", true)) .. " to pickup"
 
-            hook.Add("HUDPaint", "StigTTTTweaks", function()
+            hook.Add("HUDPaint", "TTTTweaksEToPickupText", function()
                 if pickupableWeapon then
                     draw.SimpleTextOutlined(text, "DermaLarge", ScrW() / 2, ScrH() / 1.8, COLOR_WHITE, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLOR_BLACK)
                 end
