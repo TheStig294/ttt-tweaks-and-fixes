@@ -85,8 +85,14 @@ if SERVER then
                 barnacle:AddEntityRelationship(ply, D_HT, 99)
             end
         elseif JESTER_ROLES[newRole] and not JESTER_ROLES[oldRole] then
+            local inBarnacle = ply:IsEFlagSet(EFL_IS_BEING_LIFTED_BY_BARNACLE)
+
             for _, barnacle in ipairs(ents.FindByClass("npc_barnacle")) do
                 barnacle:AddEntityRelationship(ply, D_LI, 99)
+
+                if inBarnacle then
+                    barnacle:Fire("LetGo")
+                end
             end
         end
     end)
