@@ -633,61 +633,78 @@ end)
 -- 
 -- 
 hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, class)
-    if class == "zay_shell" and SERVER then
+    if class == "zay_shell" then
         -- Makes it so players behind cover take reduced damage from the artillery cannon
-        local coverCvar = CreateConVar("ttt_tweaks_artillery_cover_damage", "1", nil, "Wether players should take reduced damage behind cover from the artillery cannon")
+        if SERVER then
+            local coverCvar = CreateConVar("ttt_tweaks_artillery_cover_damage", "1", nil, "Wether players should take reduced damage behind cover from the artillery cannon")
 
-        function ENT:PhysicsCollide(data, phys)
-            if self.zay_Collided == true then return end
+            function ENT:PhysicsCollide(data, phys)
+                if self.zay_Collided == true then return end
 
-            timer.Simple(0, function()
-                if not IsValid(self) then return end
-                self:SetNoDraw(true)
-                local a_phys = self:GetPhysicsObject()
+                timer.Simple(0, function()
+                    if not IsValid(self) then return end
+                    self:SetNoDraw(true)
+                    local a_phys = self:GetPhysicsObject()
 
-                if IsValid(a_phys) then
-                    a_phys:Wake()
-                    a_phys:EnableMotion(false)
-                end
-            end)
-
-            zay.f.CreateNetEffect("shell_explosion", self:GetPos())
-
-            for _, ent in pairs(ents.FindInSphere(self:GetPos(), GetConVar("ttt_artillery_range"):GetFloat())) do
-                if IsValid(ent) then
-                    local Trace = {}
-                    Trace.start = self:GetPos()
-                    Trace.endpos = ent:GetPos()
-
-                    Trace.filter = {self, ent}
-
-                    Trace.mask = MASK_SHOT
-                    Trace.collisiongroup = COLLISION_GROUP_PROJECTILE
-                    local TraceResult = util.TraceLine(Trace)
-                    local damage = GetConVar("ttt_artillery_damage"):GetFloat()
-
-                    -- Players behind cover take half damage
-                    if coverCvar:GetBool() and TraceResult.Hit then
-                        damage = damage / 2
+                    if IsValid(a_phys) then
+                        a_phys:Wake()
+                        a_phys:EnableMotion(false)
                     end
+                end)
 
-                    local d = DamageInfo()
-                    d:SetDamage(damage)
-                    d:SetAttacker(self:GetPhysicsAttacker())
-                    d:SetInflictor(self)
-                    d:SetDamageType(DMG_BLAST)
-                    ent:TakeDamageInfo(d)
+                zay.f.CreateNetEffect("shell_explosion", self:GetPos())
+
+                for _, ent in pairs(ents.FindInSphere(self:GetPos(), GetConVar("ttt_artillery_range"):GetFloat())) do
+                    if IsValid(ent) then
+                        local Trace = {}
+                        Trace.start = self:GetPos()
+                        Trace.endpos = ent:GetPos()
+
+                        Trace.filter = {self, ent}
+
+                        Trace.mask = MASK_SHOT
+                        Trace.collisiongroup = COLLISION_GROUP_PROJECTILE
+                        local TraceResult = util.TraceLine(Trace)
+                        local damage = GetConVar("ttt_artillery_damage"):GetFloat()
+
+                        -- Players behind cover take half damage
+                        if coverCvar:GetBool() and TraceResult.Hit then
+                            damage = damage / 2
+                        end
+
+                        local d = DamageInfo()
+                        d:SetDamage(damage)
+                        d:SetAttacker(self:GetPhysicsAttacker())
+                        d:SetInflictor(self)
+                        d:SetDamageType(DMG_BLAST)
+                        ent:TakeDamageInfo(d)
+                    end
                 end
+
+                local deltime = FrameTime() * 2
+
+                if not game.SinglePlayer() then
+                    deltime = FrameTime() * 6
+                end
+
+                SafeRemoveEntityDelayed(self, deltime)
+                self.zay_Collided = true
             end
+        end
 
-            local deltime = FrameTime() * 2
-
-            if not game.SinglePlayer() then
-                deltime = FrameTime() * 6
+        -- Fixes "2" being spammed in the console whenever an artillery shell lands
+        if CLIENT then
+            zay.NetEffectGroups.shell_explosion.action = function(pos)
+                local effectdata = EffectData()
+                effectdata:SetOrigin(pos)
+                local scale = 2 * (GetConVar("ttt_artillery_range"):GetFloat() / 750)
+                effectdata:SetRadius(scale)
+                effectdata:SetScale(scale)
+                effectdata:SetMagnitude(scale)
+                util.Effect("effect_explosion_scaleable", effectdata)
+                zay.f.PositionSound(pos, "zay_artillery_explo_ttt")
+                util.Decal("Scorch", pos + Vector(0, 0, 15), pos - Vector(0, 0, 200))
             end
-
-            SafeRemoveEntityDelayed(self, deltime)
-            self.zay_Collided = true
         end
     elseif class == "ttt_redblackhole" and SERVER then
         -- Makes it so all players take regular damage from the red matter bomb, regardless of role

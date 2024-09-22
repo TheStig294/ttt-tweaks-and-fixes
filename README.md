@@ -126,7 +126,7 @@ Fixed the prop hunt gun not fully disguising you, you are now fully invisible an
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2796353349>
 
 - "Artillery Cannon" by Valafi\
-Added option for players to behind cover take reduced damage from the artillery cannon, added options to make artillery cannon always red and not re-buyable\
+Added option for players to behind cover take reduced damage from the artillery cannon, added options to make artillery cannon always red and not re-buyable, fixed "2" debug print message spam whenever a shell lands\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2087368173>
 
 - "Hot Potato" by SkyDivingL\
@@ -217,4 +217,5 @@ Added option to completely disable the TFA weapon inspect button as people accid
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
 
 ## Steam Workshop Link
+
 <https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034>
