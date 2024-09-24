@@ -543,6 +543,47 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 end)
             end
         end
+    elseif class == "weapon_banana" then
+        function SWEP:SecondaryAttack()
+            if SERVER then
+                timer.Simple(0.3, function()
+                    if not IsValid(self) then return end
+                    local owner = self:GetOwner()
+                    if not IsValid(owner) then return end
+                    owner:EmitSound(self.Sounds["Squeeze" .. math.random(1, 3)])
+                    self:SendWeaponAnim(ACT_VM_SECONDARYATTACK)
+                end)
+            end
+
+            self:SendWeaponAnim(ACT_VM_SECONDARYATTACK)
+            self:SetNextPrimaryFire(CurTime() + 0.14)
+            self:SetNextSecondaryFire(CurTime() + 1)
+
+            -- Gotta love some globals polution...
+            if newFuse and CLIENT then
+                timer.Simple(0.7, function()
+                    newFuse = true
+                end)
+
+                newFuse = false
+
+                if fuseTime <= 0.125 then
+                    fuseTime = baseFuseTime
+                else
+                    if fuseTime >= 2 and fuseTime < 8 then
+                        fuseTime = fuseTime - 1
+                    else
+                        fuseTime = fuseTime / 2
+                    end
+                end
+
+                net.Start("smod_Banana_setFuseOnThrow")
+                net.WriteFloat(fuseTime)
+                net.SendToServer()
+            end
+
+            return false
+        end
     end
 end)
 

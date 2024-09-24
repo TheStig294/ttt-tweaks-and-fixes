@@ -164,6 +164,10 @@ Added a HUD icon to indicate the bruh bunker being bought, added a local "bruh" 
 - HUD icon system originally created by Zaratusa
 Modified by me to work with Custom Role's changes to passive items
 
+- "TTT Banana Bomb" by GHXX\
+Fixed a lua error when changing the banana bomb fuse time just as the weapon is removed\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=654570222>
+
 ## Extra fixes
 
 The following mods were fixed without needing to change bits of their code.
