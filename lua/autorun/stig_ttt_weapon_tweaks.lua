@@ -464,38 +464,80 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         -- Changes the music of the hot potato to a royalty-free alternative
         local musicCvar = CreateConVar("ttt_tweaks_hot_potato_no_copyright_music", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Whether the hot potato's music is replaced with non-copyright music")
 
-        if not musicCvar:GetBool() then return end
         local oldMusic = "hotpotatoloop.wav"
         local newMusic = Sound("stig_ttt_tweaks_and_fixes/hotpotato.mp3")
+
         -- A global function from the hot potato SWEP file
         -- Hijack it to use it like a hook for removing the potato sound when it should be
-        local old_fn_CleanUp = fn_CleanUp
+        if musicCvar:GetBool() then
+            local old_fn_CleanUp = fn_CleanUp
 
-        function fn_CleanUp(ply)
-            if SERVER then
-                ply:StopSound(newMusic)
+            function fn_CleanUp(ply)
+                if SERVER then
+                    ply:StopSound(newMusic)
+                end
+
+                return old_fn_CleanUp(ply)
             end
+        end
 
-            return old_fn_CleanUp(ply)
+        -- Resetting the speed boost given by hot potato
+        SWEP.OldTweaksPrimaryAttack = SWEP.PrimaryAttack
+
+        function SWEP:PrimaryAttack()
+            local owner = self:GetOwner()
+
+            timer.Simple(0.1, function()
+                if IsValid(owner) then
+                    local wep = owner:GetActiveWeapon()
+
+                    if not IsValid(wep) or not wep.PotatoChef then
+                        owner:SetWalkSpeed(220)
+                        owner:SetRunSpeed(220)
+                    end
+                end
+            end)
+
+            return self:OldTweaksPrimaryAttack()
         end
 
         SWEP.OldTweaksPotatoTime = SWEP.PotatoTime
 
         function SWEP:PotatoTime(ply, PotatoChef)
-            SWEP:OldTweaksPotatoTime(ply, PotatoChef)
-            ply:StopSound(oldMusic)
-            ply:StartLoopingSound(newMusic)
-
-            timer.Simple(0.1, function()
-                ply:StopSound(oldMusic)
+            -- Fixes the speed boost of the hot potato not working
+            hook.Add("WeaponEquip", "TTTTweaksHotPotatoSpeedBoost", function(wep, p)
+                timer.Simple(0.1, function()
+                    if IsValid(wep) and wep.PotatoChef then
+                        p:SetWalkSpeed(p:GetWalkSpeed() * GetConVar("ttt_hotpotato_speedbuff"):GetFloat())
+                        p:SetRunSpeed(p:GetRunSpeed() * GetConVar("ttt_hotpotato_speedbuff"):GetFloat())
+                    end
+                end)
             end)
+
+            hook.Add("TTTPrepareRound", "TTTTweaksHotPotatoSpeedBoost", function()
+                hook.Remove("WeaponEquip", "TTTTweaksHotPotatoSpeedBoost")
+                hook.Remove("TTTPrepareRound", "TTTTweaksHotPotatoSpeedBoost")
+            end)
+
+            SWEP:OldTweaksPotatoTime(ply, PotatoChef)
+
+            if musicCvar:GetBool() then
+                ply:StopSound(oldMusic)
+                ply:StartLoopingSound(newMusic)
+
+                timer.Simple(0.1, function()
+                    ply:StopSound(oldMusic)
+                end)
+            end
         end
 
-        SWEP.OldTweaksDetonate = SWEP.Detonate
+        if musicCvar:GetBool() then
+            SWEP.OldTweaksDetonate = SWEP.Detonate
 
-        function SWEP:Detonate(ply)
-            SWEP:OldTweaksDetonate(ply)
-            ply:StopSound(newMusic)
+            function SWEP:Detonate(ply)
+                SWEP:OldTweaksDetonate(ply)
+                ply:StopSound(newMusic)
+            end
         end
     elseif class == "weapon_ttt_deadringer" and ConVarExists("ttt_deadringer_sound_activate_local") then
         -- Have to do extra check to differentiate other versions of the dead ringer with the same classname

@@ -130,7 +130,7 @@ Added option for players to behind cover take reduced damage from the artillery 
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2087368173>
 
 - "Hot Potato" by SkyDivingL\
-Added option of changing the music of the hot potato to a royalty-free alternative\
+Added option of changing the music of the hot potato to a royalty-free alternative, fixed ttt_hotpotato_speedbuff convar not working\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2377790970>
 
 - "Bonk Bat" by kev0\
