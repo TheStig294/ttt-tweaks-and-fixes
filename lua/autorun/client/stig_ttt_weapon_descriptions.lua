@@ -213,5 +213,10 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponDescriptions", function(SWEP, class)
             type = "item_passive",
             desc = "Set the next person you look at on fire. \n\nYou don't have to equip this to use it, \njust look at someone."
         }
+    elseif class == "weapon_ttt_gift" then
+        SWEP.EquipMenuData = {
+            type = "item_weapon",
+            desc = "Give someone a Present!\nYou have a 3 in 4 chance to heal 50HP\n...and a 1 in 4 chance to explode!\nThis can be used twice!"
+        }
     end
 end)
