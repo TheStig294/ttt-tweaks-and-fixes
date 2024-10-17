@@ -993,7 +993,11 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
 
                             timer.Simple(4.5, function()
                                 if IsValid(v) then
-                                    v:GetPhysicsObject():EnableGravity(true)
+                                    local phys = v:GetPhysicsObject()
+
+                                    if IsValid(phys) then
+                                        phys:EnableGravity(true)
+                                    end
                                 end
                             end)
                         end
