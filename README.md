@@ -220,6 +220,10 @@ Added option for the "No-one can hide from my sight" randomat to trigger after t
 Added option to completely disable the TFA weapon inspect button as people accidentally press it and get stuck on the inspection screen\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
 
+- "Brain Parasite" by Marc1944\
+Completely re-wrote the weapon to fix it not working at all\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=265678425>
+
 ## Steam Workshop Link
 
 <https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034>
