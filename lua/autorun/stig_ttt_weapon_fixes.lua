@@ -584,6 +584,94 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
 
             return false
         end
+    elseif class == "weapon_ttt_brain_parasite" then
+        SWEP.IsSilent = true
+        SWEP.Primary.Sound = Sound("Weapon_USP.SilencedShot")
+        SWEP.Primary.SoundLevel = 50
+        SWEP.IronSightsPos = Vector(-5.91, -4, 2.84)
+        SWEP.IronSightsAng = Vector(-0.5, 0, 0)
+        SWEP.PrimaryAnim = ACT_VM_PRIMARYATTACK_SILENCED
+        SWEP.ReloadAnim = ACT_VM_RELOAD_SILENCED
+        SWEP.Primary.Recoil = 1.35
+        SWEP.Primary.Damage = 1
+        SWEP.Primary.Delay = 0.38
+        SWEP.Primary.Cone = 0.02
+        SWEP.Primary.ClipSize = 1
+        SWEP.Primary.Automatic = true
+        SWEP.Primary.DefaultClip = 1
+        SWEP.Primary.ClipMax = 1
+
+        if CLIENT then
+            SWEP.PrintName = "Brain Parasite"
+
+            SWEP.EquipMenuData = {
+                type = "item_weapon",
+                desc = "Silenced pistol loaded with parasites that force the target to shoot arbitrarily.\n\nThe parasite kills the victim 20 seconds after infection.\n\n1 dart."
+            }
+        end
+
+        function SWEP:Deploy()
+            self:SendWeaponAnim(ACT_VM_DRAW_SILENCED)
+
+            return self.BaseClass.Deploy(self)
+        end
+
+        function SWEP:PrimaryAttack()
+            if not self:CanPrimaryAttack() then return end
+            local owner = self:GetOwner()
+            if not IsValid(owner) then return end
+            self:TakePrimaryAmmo(1)
+            self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+            self:ShootEffects()
+            owner:EmitSound(self.Primary.Sound)
+
+            if owner:IsPlayer() then
+                owner:ViewPunch(Angle(math.Rand(-0.2, -0.1) * self.Primary.Recoil, math.Rand(-0.1, 0.1) * self.Primary.Recoil, 0))
+            end
+
+            if CLIENT or not IsFirstTimePredicted() then return end
+            local tr = owner:GetEyeTrace()
+            local victim = tr.Entity
+            if not IsValid(victim) then return end
+            victim.BrainParasiteActive = true
+            victim:ConCommand("+attack")
+            local attacker = owner
+
+            timer.Simple(20, function()
+                if IsValid(victim) and victim.BrainParasiteActive then
+                    victim.BrainParasiteActive = nil
+                    victim:ConCommand("-attack")
+                    local dmg = DamageInfo()
+
+                    if not IsValid(attacker) then
+                        attacker = victim
+                    end
+
+                    dmg:SetInflictor(ents.Create("weapon_ttt_brain_parasite"))
+                    dmg:SetAttacker(attacker)
+                    dmg:SetDamage(10000)
+                    dmg:SetDamageType(DMG_BULLET)
+                    victim:TakeDamageInfo(dmg)
+                end
+            end)
+
+            hook.Add("PostPlayerDeath", "BrainParasiteDeath", function(ply)
+                ply.BrainParasiteActive = nil
+                victim:ConCommand("-attack")
+            end)
+
+            hook.Add("TTTPrepareRound", "BrainParasiteReset", function()
+                for _, ply in player.Iterator() do
+                    if ply.BrainParasiteActive then
+                        ply.BrainParasiteActive = nil
+                        victim:ConCommand("-attack")
+                    end
+                end
+
+                hook.Remove("PostPlayerDeath", "BrainParasiteDeath")
+                hook.Remove("TTTPrepareRound", "BrainParasiteReset")
+            end)
+        end
     end
 end)
 
