@@ -632,7 +632,7 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
             if CLIENT or not IsFirstTimePredicted() then return end
             local tr = owner:GetEyeTrace()
             local victim = tr.Entity
-            if not IsValid(victim) then return end
+            if not IsPlayer(victim) then return end
             victim.BrainParasiteActive = true
             victim:ConCommand("+attack")
             local attacker = owner
