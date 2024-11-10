@@ -672,6 +672,19 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 hook.Remove("TTTPrepareRound", "BrainParasiteReset")
             end)
         end
+    elseif class == "giantsupermariomushroom" then
+        -- Fix for when TTT2 is not installed
+        SWEP.PrintName = "Mario Mushroom"
+
+        function SWEP:OwnerChanged()
+            local owner = self:GetOwner()
+            if not IsValid(owner) then return end
+            owner.GetSubRoleModel = owner.GetSubRoleModel or function(ply) return ply:GetModel() end
+
+            owner.SetSubRoleModel = owner.SetSubRoleModel or function(ply, model)
+                FindMetaTable("Entity").SetModel(ply, model)
+            end
+        end
     end
 end)
 
