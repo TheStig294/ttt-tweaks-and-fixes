@@ -229,6 +229,10 @@ Added option to completely disable the TFA weapon inspect button as people accid
 Completely re-wrote the weapon to fix it not working at all\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=265678425>
 
+- "TFA Base" by YuRaNnNzZZ\
+Fixed TFA base erroring sometimes when killing someone using a TFA weapon\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
+
 ## Steam Workshop Link
 
 <https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034>

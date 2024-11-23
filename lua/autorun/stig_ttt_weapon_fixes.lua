@@ -732,6 +732,23 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 end)
             end)
         end
+    elseif class == "tfa_gun_base" then
+        -- Fix errors when trying to acces an invalid player in TFA guns, e.g. when a player has just died
+        SWEP.OldCalculateViewModelOffset = SWEP.CalculateViewModelOffset
+
+        function SWEP:CalculateViewModelOffset(...)
+            if not IsValid(self:GetOwner()) then return end
+
+            return self:OldCalculateViewModelOffset(...)
+        end
+
+        SWEP.OldDrawKeyBindHints = SWEP.DrawKeyBindHints
+
+        function SWEP:DrawKeyBindHints(...)
+            if not IsValid(self:GetOwner()) then return end
+
+            return self:OldDrawKeyBindHints(...)
+        end
     end
 end)
 
