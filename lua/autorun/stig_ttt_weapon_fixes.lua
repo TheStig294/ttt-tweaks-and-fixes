@@ -1311,5 +1311,38 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
                 self:SetPlaybackRate(2)
             end)
         end
+    elseif class == "ent_fortnitestructure" then
+        -- Fix error when damage attacker is a NULL entity
+        function ENT:OnTakeDamage(damage)
+            if damage:GetDamage() <= 0 then return end
+
+            if damage:GetDamageType() == DMG_CLUB then
+                self:SetHealth(self:Health() - 1.5 * damage:GetDamage())
+            elseif damage:GetDamageType() == DMG_BLAST then
+                self:SetHealth(self:Health() - 2.0 * damage:GetDamage())
+            else
+                self:SetHealth(self:Health() - 1.2 * damage:GetDamage())
+            end
+
+            if self:Health() <= 0 and SERVER then
+                local neighbours = self.Neighbours
+                local selfEntityCount = self.EntityCount
+                local attacker = damage:GetAttacker()
+
+                if not IsValid(attacker) then
+                    attacker = nil
+                end
+
+                timer.Create("Fortnite_Destroy_Timer" .. tostring(selfEntityCount), 0.08, 4, function()
+                    for _, ent in pairs(neighbours) do
+                        if IsValid(ent) and not ent:ConnectedToGround() then
+                            ent:TakeDamage(ent:GetMaxHealth() / 4, attacker)
+                        end
+                    end
+                end)
+
+                self:Remove()
+            end
+        end
     end
 end)

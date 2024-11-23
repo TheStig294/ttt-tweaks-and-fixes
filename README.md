@@ -173,13 +173,14 @@ Fixed a lua error when firing the kamehameha and the weapon is removed (e.g. the
 Fixed multiple players shooting the beam causing errors/stopping the other player from shooting\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1599710095>
 
+- "Fortnite Building Tool" by LeBroomer\
+Fixed lua error when holstering the fortnite building tool\
+Fixed lua errors whenever an unknown entity is damaging a fortnite structure\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1433010063>
+
 ## Extra fixes
 
 The following mods were fixed without needing to change bits of their code.
-
-- "Fortnite Building Tool" by LeBroomer\
-Fixed lua error when holstering the fortnite building tool\
-<https://steamcommunity.com/sharedfiles/filedetails/?id=1433010063>
 
 - "R8 Revolver" by Corvatile\
 Fixed shoot sound having no volume drop-off (shoot sound is global), fixed pistol not taking pistol slot\
