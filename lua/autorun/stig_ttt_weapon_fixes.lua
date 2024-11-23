@@ -749,6 +749,17 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
 
             return self:OldDrawKeyBindHints(...)
         end
+    elseif class == "stungun" and CLIENT then
+        -- Fix lua error when the weapon is stripped
+        timer.Simple(0, function()
+            net.Receive("tazerondrop", function()
+                local ent = net.ReadEntity()
+
+                if IsValid(ent) and ent.OnDrop and isfunction(ent.OnDrop) then
+                    ent:OnDrop()
+                end
+            end)
+        end)
     end
 end)
 

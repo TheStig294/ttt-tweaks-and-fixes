@@ -224,15 +224,16 @@ Added option for the "No-one can hide from my sight" randomat to trigger after t
 
 - "TFA Base" by YuRaNnNzZZ\
 Added option to completely disable the TFA weapon inspect button as people accidentally press it and get stuck on the inspection screen\
+Fixed TFA base erroring sometimes when killing someone using a TFA weapon\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
 
 - "Brain Parasite" by Marc1944\
 Completely re-wrote the weapon to fix it not working at all\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=265678425>
 
-- "TFA Base" by YuRaNnNzZZ\
-Fixed TFA base erroring sometimes when killing someone using a TFA weapon\
-<https://steamcommunity.com/sharedfiles/filedetails/?id=2840031720>
+- "TTT Taser" by MissChief\
+Fixed client-side lua error when the taser is stripped from a player (e.g. round restarting)\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=785294711>
 
 ## Steam Workshop Link
 
