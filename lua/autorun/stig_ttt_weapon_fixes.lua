@@ -685,6 +685,53 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 FindMetaTable("Entity").SetModel(ply, model)
             end
         end
+    elseif class == "ttt_kamehameha_swep" then
+        -- Fix lua error when firing the kamehameha and the weapon is removed (e.g. the player dies before it goes off)
+        -- Fix multiple players shooting the beam causing errors/stopping the other player from shooting
+        SWEP.OldPrimaryAttack = SWEP.PrimaryAttack
+
+        function SWEP:PrimaryAttack(arguments)
+            self:OldPrimaryAttack()
+            timer.Remove("FinalHA")
+            local owner = self:GetOwner()
+            if not IsValid(owner) then return end
+
+            timer.Simple(3.4, function()
+                if not IsValid(owner) or not IsValid(self) then return end
+                owner:Freeze(true)
+                BroadcastLua("surface.PlaySound(\"weapons/shoot/ha.wav\")")
+                local timerName = "TTTKamehamehaBeam" .. owner:SteamID64()
+
+                timer.Create(timerName, 0.01, 50, function()
+                    if not IsValid(owner) or not IsValid(self) then
+                        timer.Remove(timerName)
+
+                        return
+                    end
+
+                    local bullet = {}
+                    bullet.Src = owner:GetShootPos()
+                    bullet.Dir = owner:GetAimVector()
+                    bullet.Spread = Vector(0, 0, 0)
+                    bullet.Num = 1
+                    bullet.Tracer = 1
+                    bullet.Damage = 30
+                    bullet.TracerName = "kamebeam"
+                    self:TakePrimaryAmmo(1)
+                    owner:FireBullets(bullet)
+                    local effects = EffectData()
+                    local trace = owner:GetEyeTrace()
+                    effects:SetOrigin(trace.HitPos + Vector(math.Rand(-0.5, 0.5), math.Rand(-0.5, 0.5), math.Rand(-0.5, 0.5)))
+                    effects:SetScale(10)
+                    effects:SetRadius(200)
+                    effects:SetMagnitude(3.1)
+                    effects:SetAngles(Angle(0, 90, 0))
+                    util.Effect("beampact", effects)
+                    util.BlastDamage(self, self, trace.HitPos, 200, 170)
+                    sound.Play("weapons/explosion/dbzexplosion.wav", trace.HitPos, 180)
+                end)
+            end)
+        end
     end
 end)
 

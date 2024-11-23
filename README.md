@@ -168,6 +168,11 @@ Modified by me to work with Custom Role's changes to passive items
 Fixed a lua error when changing the banana bomb fuse time just as the weapon is removed\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=654570222>
 
+- "TTT Kamehameha Weapon" by Lord Hamster\
+Fixed a lua error when firing the kamehameha and the weapon is removed (e.g. the player dies before it goes off)\
+Fixed multiple players shooting the beam causing errors/stopping the other player from shooting\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1599710095>
+
 ## Extra fixes
 
 The following mods were fixed without needing to change bits of their code.
