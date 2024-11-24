@@ -760,6 +760,28 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 end
             end)
         end)
+    elseif class == "weapon_portalgun" and SERVER then
+        -- Fix performance issue on the server where the portal gun is checking for visible portals even when the portal gun is not being used
+        -- "SetupPlayerVisibility" is a very costly hook that is called multiple times a server tick
+        hook.Remove("SetupPlayerVisibility", "PORTALGUN_PORTAL_SETUPVIS")
+
+        function SWEP:Initialize()
+            self:SetWeaponHoldType("shotgun")
+
+            hook.Add("SetupPlayerVisibility", "PORTALGUN_PORTAL_SETUPVIS", function()
+                -- Also, this was originally being called with "pairs(ents.GetAll())" (very slow for something called so often...)
+                for _, ent in ents.Iterator() do
+                    if ent:GetClass() == "portalgun_portal" then
+                        AddOriginToPVS(ent:GetPos())
+                    end
+                end
+            end)
+
+            hook.Add("TTTPrepareRound", "PORTALGUN_PORTAL_SETUPVIS_RESET", function()
+                hook.Remove("SetupPlayerVisibility", "PORTALGUN_PORTAL_SETUPVIS")
+                hook.Remove("TTTPrepareRound", "PORTALGUN_PORTAL_SETUPVIS_RESET")
+            end)
+        end
     end
 end)
 
