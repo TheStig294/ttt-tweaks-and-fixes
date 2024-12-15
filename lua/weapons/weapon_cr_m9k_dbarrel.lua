@@ -72,7 +72,7 @@ function SWEP:SecondaryAttack()
         self:SetNextPrimaryFire(CurTime() + .05)
 
         timer.Simple(0.05, function()
-            if self ~= nil then
+            if IsValid(self) then
                 self:PrimaryAttack()
             end
         end)
