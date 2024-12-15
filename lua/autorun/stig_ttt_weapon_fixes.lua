@@ -1074,44 +1074,38 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
         local ATTACK_DIST = 150
 
         function ENT:JumpAtTarget()
-            if self.Target ~= NULL then
-                local vel
+            if not IsValid(self.Target) then return end
+            local vel
 
-                if self.TargetHasPhysics and IsValid(self.TargetPhys) then
-                    vel = self.TargetPhys:GetVelocity()
-                else
-                    vel = self.Target:GetVelocity()
-                end
+            if self.TargetHasPhysics and IsValid(self.TargetPhys) then
+                vel = self.TargetPhys:GetVelocity()
+            else
+                vel = self.Target:GetVelocity()
+            end
 
-                local mypos = self:GetPos()
-                local targpos = self.Target:EyePos()
-                local disp = targpos - mypos
-                local proj = vel - disp:Dot(vel) / disp:Dot(disp) * disp
-                local dest = targpos + proj * 0.6
-                local dist = mypos:Distance(dest)
-                vel = (dest - mypos) * JUMP_HORIZ_SPEED / dist
-                vel.z = 250
+            local mypos = self:GetPos()
+            local targpos = self.Target:EyePos()
+            local disp = targpos - mypos
+            local proj = vel - disp:Dot(vel) / disp:Dot(disp) * disp
+            local dest = targpos + proj * 0.6
+            local dist = mypos:Distance(dest)
+            vel = (dest - mypos) * JUMP_HORIZ_SPEED / dist
+            vel.z = 250
 
-                if vel.z < 20 then
-                    vel.z = 20
-                end
+            if vel.z < 20 then
+                vel.z = 20
+            end
 
-                if type(vel) ~= "userdata" and IsValid(self.Phys) then
-                    self.Phys:AddVelocity(vel)
-                end
+            if IsValid(self.Phys) then
+                self.Phys:AddVelocity(vel)
+                self.Phys:AddAngleVelocity(Vector(0, 0, 5))
+            end
 
-                local ang = Vector(0, 0, 5)
-
-                if type(ang) == "Vector" and IsValid(self.Phys) then
-                    self.Phys:AddAngleVelocity(ang)
-                end
-
-                -- Attack!
-                if dist < ATTACK_DIST then
-                    self.Attacking = true
-                else
-                    self.Attacking = true
-                end
+            -- Attack!
+            if dist < ATTACK_DIST then
+                self.Attacking = true
+            else
+                self.Attacking = false
             end
         end
 
