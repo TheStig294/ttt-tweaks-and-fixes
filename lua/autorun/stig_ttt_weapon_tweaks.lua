@@ -207,11 +207,11 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
             bullet.Damage = dmg
             owner:FireBullets(bullet)
             -- Owner can die after firebullets
-            if (not IsValid(owner)) or (not owner:Alive()) or owner:IsNPC() then return end
+            if not IsValid(owner) or not owner:Alive() or owner:IsNPC() then return end
 
-            if (game.SinglePlayer() and SERVER) or ((not game.SinglePlayer()) and CLIENT and IsFirstTimePredicted()) then
+            if game.SinglePlayer() and SERVER or not game.SinglePlayer() and CLIENT and IsFirstTimePredicted() then
                 -- reduce recoil if ironsighting
-                recoil = sights and (recoil * 0.6) or recoil
+                recoil = sights and recoil * 0.6 or recoil
 
                 if recoil and isnumber(recoil) then
                     local eyeang = owner:EyeAngles()
@@ -739,7 +739,7 @@ hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, cl
             zay.NetEffectGroups.shell_explosion.action = function(pos)
                 local effectdata = EffectData()
                 effectdata:SetOrigin(pos)
-                local scale = 2 * (GetConVar("ttt_artillery_range"):GetFloat() / 750)
+                local scale = 2 * GetConVar("ttt_artillery_range"):GetFloat() / 750
                 effectdata:SetRadius(scale)
                 effectdata:SetScale(scale)
                 effectdata:SetMagnitude(scale)
@@ -778,7 +778,7 @@ hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, cl
                             self:IncrRadius(0.2)
                             ent:EmitSound("ambient/energy/zap8.wav")
                         else
-                            local force = posdiff * ((valve_radius - dist) / 25) * 45
+                            local force = posdiff * (valve_radius - dist) / 25 * 45
                             ent:SetVelocity(force)
                         end
                     end
@@ -812,6 +812,88 @@ hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, cl
         -- Making the bruh bunker make a "bruh" sound on being triggered
         function ENT:Initialize()
             self:EmitSound("stig_ttt_tweaks_and_fixes/bruh.mp3")
+        end
+    elseif class == "sent_jetpack" then
+        -- Fixes the jetpack erroring on being spawned
+        -- Adds an indicator to current fuel left when infinite fuel is turned off
+        DEFINE_BASECLASS("base_predictedent")
+
+        function ENT:Initialize()
+            if self.SetSlotName then
+                self:SetSlotName(self:GetClass())
+            end
+
+            BaseClass.Initialize(self)
+
+            if SERVER then
+                self:SetModel("models/thrusters/jetpack.mdl")
+                self:InitPhysics()
+                self:SetMaxHealth(GetConVar("JetpackMaxHealth"):GetInt())
+                self:SetHealth(self:GetMaxHealth())
+                self:SetInfiniteFuel(GetConVar("UseInfiniteFuel"):GetBool())
+                self:SetMaxFuel(GetConVar("MaxJetPackFuel"):GetInt())
+                self:SetFuel(self:GetMaxFuel())
+                self:SetFuelDrain(GetConVar("JetPackDrainRate"):GetInt()) --drain in seconds
+                self:SetFuelRecharge(GetConVar("JetPackRefuelRate"):GetInt()) --recharge in seconds
+                self:SetActive(false)
+                self:SetGoneApeshit(math.random(0, 100) > 95) --little chance that on spawn we're gonna be crazy!
+                self:SetGoneApeshitTime(0)
+                self:SetCanStomp(false)
+                self:SetDoGroundSlam(false)
+                self:SetAirResistance(2.5)
+                self:SetRemoveGravity(false)
+                self:SetJetpackSpeed(224)
+                self:SetJetpackStrafeSpeed(600)
+                self:SetJetpackVelocity(1200)
+                self:SetJetpackStrafeVelocity(1200)
+            else
+                self:SetLastActive(false)
+                self:SetWingClosure(0)
+                self:SetWingClosureStartTime(0)
+                self:SetWingClosureEndTime(0)
+                self:SetNextParticle(0)
+                self:SetNextFlameTrace(0)
+                self:SetLastFlameTrace(nil)
+            end
+        end
+
+        function ENT:OnInitPhysics(physobj)
+            if IsValid(physobj) then
+                physobj:SetMass(75)
+            end
+
+            self:SetCollisionGroup(COLLISION_GROUP_NONE)
+        end
+
+        if SERVER then
+            util.AddNetworkString("TTTEquippedJetpackFuelIndicator")
+        end
+
+        function ENT:OnAttach(ply)
+            self:SetDoGroundSlam(false)
+            if GetConVar("UseInfiniteFuel"):GetBool() then return end
+            net.Start("TTTEquippedJetpackFuelIndicator")
+            net.WriteEntity(self)
+            net.Send(ply)
+        end
+
+        if CLIENT then
+            net.Receive("TTTEquippedJetpackFuelIndicator", function()
+                local ply = LocalPlayer()
+                local jetpack = net.ReadEntity()
+                local backgroundColor = Color(128, 128, 128, 200)
+                local textColor = COLOR_WHITE
+
+                hook.Add("HUDPaint", "TTTEquippedJetpackFuelIndicator", function()
+                    if not IsValid(jetpack) or not IsValid(jetpack:GetControllingPlayer()) or jetpack:GetControllingPlayer() ~= ply then
+                        hook.Remove("HUDPaint", "TTTEquippedJetpackFuelIndicator")
+
+                        return
+                    end
+
+                    draw.WordBox(8, 330, ScrH() - 50, "Fuel: " .. math.Round(jetpack:GetFuel()), "HealthAmmo", backgroundColor, textColor, TEXT_ALIGN_CENTER)
+                end)
+            end)
         end
     end
 end)

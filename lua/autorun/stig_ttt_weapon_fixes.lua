@@ -156,7 +156,7 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
 
             if mimicCount > 0 then
                 for k, v in pairs(player.GetAll()) do
-                    if v:GetRole() == ROLE_TRAITOR or (v.IsTraitorTeam and v:IsTraitorTeam()) then
+                    if v:GetRole() == ROLE_TRAITOR or v.IsTraitorTeam and v:IsTraitorTeam() then
                         v:PrintMessage(HUD_PRINTTALK, mimicCount .. " mimics spawned")
                     end
                 end
@@ -1008,9 +1008,9 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
             if IsValid(attacker) and attacker:IsNPC() and attacker:GetClass() == BeeNPCClass then
                 if not IsValid(victim) or not victim.GetRole then
                     dmg:SetDamage(BeeInnocentDamage)
-                elseif victim:GetRole() == ROLE_INNOCENT or (victim.IsInnocentTeam and victim:IsInnocentTeam()) then
+                elseif victim:GetRole() == ROLE_INNOCENT or victim.IsInnocentTeam and victim:IsInnocentTeam() then
                     dmg:SetDamage(BeeInnocentDamage)
-                elseif victim:GetRole() == ROLE_TRAITOR or (victim.IsTraitorTeam and victim:IsTraitorTeam()) then
+                elseif victim:GetRole() == ROLE_TRAITOR or victim.IsTraitorTeam and victim:IsTraitorTeam() then
                     dmg:SetDamage(BeeTraitorDamage)
                 else
                     dmg:SetDamage(BeeInnocentDamage)
@@ -1218,56 +1218,6 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
             self.Knife:Spawn()
             self.Knife:SetColor(Color(0, 0, 0, 0))
             self.Knife:SetParent(self)
-        end
-    elseif class == "sent_jetpack" then
-        -- Fixes the jetpack erroring on being spawned
-        DEFINE_BASECLASS("base_predictedent")
-
-        function ENT:Initialize()
-            if self.SetSlotName then
-                self:SetSlotName(self:GetClass())
-            end
-
-            BaseClass.Initialize(self)
-
-            if SERVER then
-                self:SetModel("models/thrusters/jetpack.mdl")
-                self:InitPhysics()
-                self:SetMaxHealth(GetConVar("JetpackMaxHealth"):GetInt())
-                self:SetHealth(self:GetMaxHealth())
-                self:SetInfiniteFuel(GetConVar("UseInfiniteFuel"):GetBool())
-                self:SetMaxFuel(GetConVar("MaxJetPackFuel"):GetInt())
-                self:SetFuel(self:GetMaxFuel())
-                self:SetFuelDrain(GetConVar("JetPackDrainRate"):GetInt()) --drain in seconds
-                self:SetFuelRecharge(GetConVar("JetPackRefuelRate"):GetInt()) --recharge in seconds
-                self:SetActive(false)
-                self:SetGoneApeshit(math.random(0, 100) > 95) --little chance that on spawn we're gonna be crazy!
-                self:SetGoneApeshitTime(0)
-                self:SetCanStomp(false)
-                self:SetDoGroundSlam(false)
-                self:SetAirResistance(2.5)
-                self:SetRemoveGravity(false)
-                self:SetJetpackSpeed(224)
-                self:SetJetpackStrafeSpeed(600)
-                self:SetJetpackVelocity(1200)
-                self:SetJetpackStrafeVelocity(1200)
-            else
-                self:SetLastActive(false)
-                self:SetWingClosure(0)
-                self:SetWingClosureStartTime(0)
-                self:SetWingClosureEndTime(0)
-                self:SetNextParticle(0)
-                self:SetNextFlameTrace(0)
-                self:SetLastFlameTrace(nil)
-            end
-        end
-
-        function ENT:OnInitPhysics(physobj)
-            if IsValid(physobj) then
-                physobj:SetMass(75)
-            end
-
-            self:SetCollisionGroup(COLLISION_GROUP_NONE)
         end
     elseif class == "d.va_mech" then
         -- Fixes the D.Va mech erroring on activating self-destruct
