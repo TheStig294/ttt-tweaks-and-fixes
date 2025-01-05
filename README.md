@@ -151,6 +151,7 @@ Fixed the weeping angel erroring whenever it is shot\
 
 - "[TTT] Jetpack" by HowdyImFate\
 Fixed the jetpack erroring on being spawned\
+Added fuel indicator when infinite fuel is turned off\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1735229517>
 
 - "D.Va mech w/English voice actor" by Zydel\
