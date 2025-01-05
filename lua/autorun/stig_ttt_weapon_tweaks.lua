@@ -778,7 +778,7 @@ hook.Add("PreRegisterSENT", "StigSpecialWeaponChangesEntities", function(ENT, cl
                             self:IncrRadius(0.2)
                             ent:EmitSound("ambient/energy/zap8.wav")
                         else
-                            local force = posdiff * (valve_radius - dist) / 25 * 45
+                            local force = posdiff * ((valve_radius - dist) / 25) * 45
                             ent:SetVelocity(force)
                         end
                     end
