@@ -104,13 +104,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         SWEP.Primary.Recoil = 1
 
         function SWEP:Deploy()
-            timer.Simple(0, function()
-                if self:GetIronsights() then
-                    self.Primary.Delay = 0.8
-                else
-                    self.Primary.Delay = 0.3
-                end
-            end)
+            self.Primary.Delay = 0.3
 
             return self.BaseClass.Deploy(self)
         end
@@ -175,7 +169,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
                 self:SetClip1(self:Clip1() + 1)
 
                 if self:Clip1() + 1 then
-                    self:SetNextPrimaryFire(CurTime() + 1.8)
+                    self:SetNextPrimaryFire(CurTime() + 0.9)
                 end
 
                 -- Finish filling, final pump
