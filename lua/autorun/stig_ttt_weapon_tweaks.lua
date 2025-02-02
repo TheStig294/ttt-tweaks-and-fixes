@@ -98,17 +98,91 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         SWEP.PrintName = "Viper Rifle"
         SWEP.ViewModelFlip = false
         SWEP.DrawCrosshair = false
-        SWEP.Icon = "vgui/ttt/ttt_viper_rifle"
-
-        local damageCvar = CreateConVar("ttt_tweaks_viper_rifle_damage", 65, {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Damage of the Viper Rifle gun")
-
-        SWEP.Primary.Damage = damageCvar:GetFloat()
+        SWEP.Icon = "vgui/ttt/ttt_viper_rifle.png"
+        SWEP.Primary.Damage = 40
+        SWEP.Primary.Delay = 0.3
+        SWEP.Primary.Recoil = 1
 
         function SWEP:Deploy()
-            self:SetHoldType(self.HoldType)
-            self:SendWeaponAnim(ACT_VM_DRAW)
+            timer.Simple(0, function()
+                if self:GetIronsights() then
+                    self.Primary.Delay = 0.8
+                else
+                    self.Primary.Delay = 0.3
+                end
+            end)
 
-            return true
+            return self.BaseClass.Deploy(self)
+        end
+
+        function SWEP:PrimaryAttack()
+            return self.BaseClass.PrimaryAttack(self)
+        end
+
+        function SWEP:SecondaryAttack()
+            timer.Simple(0, function()
+                if self:GetIronsights() then
+                    self.Primary.Delay = 0.8
+                else
+                    self.Primary.Delay = 0.3
+                end
+            end)
+
+            return self.BaseClass.SecondaryAttack(self)
+        end
+
+        function SWEP:Reload()
+            self:SetNextPrimaryFire(CurTime() + 0.9)
+            if self:GetNWBool("reloading", false) then return end
+            self:SetIronsights(false)
+            self.Primary.Delay = 0.3
+            -- Start reloading if we can
+            local owner = self:GetOwner()
+            if not IsValid(owner) then return end
+
+            if self:Clip1() < self.Primary.ClipSize and owner:GetAmmoCount(self.Primary.Ammo) > 0 then
+                self:SetNWBool("reloading", true)
+                self:SetVar("reloadtimer", CurTime() + 0.3)
+                self:SetVar("reloadanim", CurTime() + 0.9)
+                self:SendWeaponAnim(ACT_VM_RELOAD)
+                owner:SetAnimation(PLAYER_RELOAD)
+            end
+        end
+
+        function SWEP:Think()
+            if self:GetNWBool("reloading", false) and self:GetVar("reloadtimer", 0) < CurTime() then
+                -- Finished reload -
+                local owner = self:GetOwner()
+                if not IsValid(owner) then return end
+
+                if self:Clip1() >= self.Primary.ClipSize or owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+                    self:SetNWBool("reloading", false)
+
+                    return
+                end
+
+                -- Next cycle
+                self:SetVar("reloadtimer", CurTime() + 0.3)
+
+                if self:GetVar("reloadanim", 0) < CurTime() then
+                    self:SendWeaponAnim(ACT_VM_RELOAD)
+                    owner:SetAnimation(PLAYER_RELOAD)
+                    self:SetVar("reloadanim", CurTime() + 0.9)
+                end
+
+                -- Add ammo
+                owner:RemoveAmmo(1, self.Primary.Ammo, false)
+                self:SetClip1(self:Clip1() + 1)
+
+                if self:Clip1() + 1 then
+                    self:SetNextPrimaryFire(CurTime() + 1.8)
+                end
+
+                -- Finish filling, final pump
+                if self:Clip1() >= self.Primary.ClipSize or owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+                    self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
+                end
+            end
         end
     elseif class == "weapon_hp_ares_shrike" then
         -- Remove the exponential component of the ares shrike's recoil
