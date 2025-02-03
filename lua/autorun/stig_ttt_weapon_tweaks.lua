@@ -102,6 +102,23 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         SWEP.Primary.Damage = 40
         SWEP.Primary.Delay = 0.3
         SWEP.Primary.Recoil = 1
+        SWEP.Secondary.Sound = Sound("Default.Zoom")
+
+        function SWEP:SetZoom(state)
+            if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
+                if state then
+                    self:GetOwner():SetFOV(40, 0.3)
+                else
+                    self:GetOwner():SetFOV(0, 0.2)
+                end
+            end
+        end
+
+        if CLIENT then
+            function SWEP:AdjustMouseSensitivity()
+                return (self:GetIronsights() and 0.2) or nil
+            end
+        end
 
         function SWEP:Deploy()
             self.Primary.Delay = 0.3
@@ -116,13 +133,40 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         function SWEP:SecondaryAttack()
             timer.Simple(0, function()
                 if self:GetIronsights() then
-                    self.Primary.Delay = 0.8
+                    self.Primary.Delay = 0.9
+
+                    if CLIENT then
+                        self:EmitSound(self.Secondary.Sound)
+                    end
                 else
                     self.Primary.Delay = 0.3
                 end
+
+                self:SetZoom(self:GetIronsights())
             end)
 
             return self.BaseClass.SecondaryAttack(self)
+        end
+
+        function SWEP:PreDrop()
+            self:SetZoom(false)
+            self:SetIronsights(false)
+
+            return self.BaseClass.PreDrop(self)
+        end
+
+        function SWEP:Holster()
+            self:SetIronsights(false)
+            self:SetZoom(false)
+
+            return self.BaseClass.Holster(self)
+        end
+
+        function SWEP:OnRemove()
+            self:SetIronsights(false)
+            self:SetZoom(false)
+
+            return self.BaseClass.OnRemove(self)
         end
 
         function SWEP:Reload()
@@ -130,6 +174,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
             if self:GetNWBool("reloading", false) then return end
             self:SetIronsights(false)
             self.Primary.Delay = 0.3
+            self:SetZoom(false)
             -- Start reloading if we can
             local owner = self:GetOwner()
             if not IsValid(owner) then return end
