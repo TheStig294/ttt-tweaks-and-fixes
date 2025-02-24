@@ -101,7 +101,7 @@ hook.Add("PreRegisterSWEP", "StigSpecialWeaponTweaks", function(SWEP, class)
         SWEP.Icon = "vgui/ttt/ttt_viper_rifle.png"
         SWEP.Primary.Damage = 40
         SWEP.Primary.Delay = 0.3
-        SWEP.Primary.Recoil = 1
+        SWEP.Primary.Recoil = 4
         SWEP.Secondary.Sound = Sound("Default.Zoom")
 
         function SWEP:SetZoom(state)
