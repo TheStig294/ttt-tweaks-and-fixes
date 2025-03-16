@@ -804,11 +804,16 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
         SWEP.OldInitialize = SWEP.Initialize
 
         function SWEP:Initialize()
+            hook.Add("PlayerDisconnected", "TTTTweaksDemonicPossessionReset", function(ply)
+                hook.Remove("StartCommand", "Demon_MoveVictim" .. ply:Nick())
+            end)
+
             hook.Add("TTTPrepareRound", "TTTTweaksDemonicPossessionReset", function()
                 for _, ply in player.Iterator() do
                     hook.Remove("StartCommand", "Demon_MoveVictim" .. ply:Nick())
                 end
 
+                hook.Remove("PlayerDisconnected", "TTTTweaksDemonicPossessionReset")
                 hook.Remove("TTTPrepareRound", "TTTTweaksDemonicPossessionReset")
             end)
 
