@@ -236,9 +236,13 @@ Completely re-wrote the weapon to fix it not working at all\
 Fixed client-side lua error when the taser is stripped from a player (e.g. round restarting)\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=785294711>
 
-- "TTT - Portal Gun for Traitor/Detective" by doodlezucc \
+- "TTT - Portal Gun for Traitor/Detective" by doodlezucc\
 Fix performance issue on the server where the portal gun is checking for visible portals even when the portal gun is not being used\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2315732527>
+
+- "BearTrap for TTT" by nerdhive\
+Fixed the bear trap damaging players on the next round, if trapped as the round restarts\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=407751746>
 
 ## Steam Workshop Link
 
