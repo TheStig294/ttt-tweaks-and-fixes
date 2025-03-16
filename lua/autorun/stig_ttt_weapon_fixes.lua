@@ -782,6 +782,21 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 hook.Remove("TTTPrepareRound", "PORTALGUN_PORTAL_SETUPVIS_RESET")
             end)
         end
+    elseif class == "weapon_ttt_beartrap" then
+        -- Fix the bear trap damaging players over on the next round, if they are trapped as the round restarts
+        function SWEP:Initialize()
+            hook.Add("TTTPrepareRound", "TTTBearTrapResetTrappedPlayers", function()
+                for _, ply in player.Iterator() do
+                    local timername = "beartrapdmg" .. ply:EntIndex()
+
+                    if timer.Exists(timername) then
+                        timer.Remove(timername)
+                        ply.IsTrapped = false
+                        ply:Freeze(false)
+                    end
+                end
+            end)
+        end
     end
 end)
 
