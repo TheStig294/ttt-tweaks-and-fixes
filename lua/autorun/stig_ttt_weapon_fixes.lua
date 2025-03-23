@@ -819,22 +819,19 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
 
         if CLIENT then
             SWEP.OldPrimaryAttack = SWEP.PrimaryAttack
-
-            local oldHookAdd = hook.Add
             function SWEP:PrimaryAttack()
-                local wep = self
-                hook.Add = function(name, id, fn)
-                    -- Override this hook and ensure the weapon is valid before calling it
-                    if name == "StartCommand" and string.StartsWith(id, "Demon_MoveVictim") then
-                        oldHookAdd(name, id, function(player, ucmd)
-                            if not IsValid(wep) then return end
-                            fn(player, ucmd)
-                        end)
-                    end
-                end
+                self:OldPrimaryAttack()
 
-                wep:OldPrimaryAttack()
-                hook.Add = oldHookAdd
+                local owner = self:GetOwner()
+                if not IsValid(owner) then return end
+
+                local hooks = hook.GetTable()["StartCommand"]
+                local hookId = "Demon_MoveVictim" .. owner:Nick()
+                local oldFn = hooks[hookId]
+                hook.Add("StartCommand", hookId, function(player, ucmd)
+                    if not IsValid(self) then return end
+                    oldFn(player, ucmd)
+                end)
             end
         end
     end
