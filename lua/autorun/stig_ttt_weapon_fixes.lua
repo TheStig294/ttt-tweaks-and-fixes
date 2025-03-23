@@ -799,6 +799,26 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 hook.Remove("TTTPrepareRound", "TTTTweaksBearTrapReset")
             end)
         end
+    elseif class == "weapon_ttt_demonsign" then
+        -- Fixed the demonic possession error spamming if it goes unused for the round, after being placed down and the round restarts
+        SWEP.OldInitialize = SWEP.Initialize
+
+        function SWEP:Initialize()
+            hook.Add("PlayerDisconnected", "TTTTweaksDemonicPossessionReset", function(ply)
+                hook.Remove("StartCommand", "Demon_MoveVictim" .. ply:Nick())
+            end)
+
+            hook.Add("TTTPrepareRound", "TTTTweaksDemonicPossessionReset", function()
+                for _, ply in player.Iterator() do
+                    hook.Remove("StartCommand", "Demon_MoveVictim" .. ply:Nick())
+                end
+
+                hook.Remove("PlayerDisconnected", "TTTTweaksDemonicPossessionReset")
+                hook.Remove("TTTPrepareRound", "TTTTweaksDemonicPossessionReset")
+            end)
+
+            return self:OldInitialize()
+        end
     end
 end)
 
