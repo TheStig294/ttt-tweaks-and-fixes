@@ -244,10 +244,6 @@ Fix performance issue on the server where the portal gun is checking for visible
 Fixed the bear trap damaging players on the next round, if trapped as the round restarts\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=407751746>
 
-- "[TTT] Demonic Possession" by LeBroomer\
-Fixed the demonic possession error spamming if it goes unused for the round, after being placed down and the round restarts\
-<https://steamcommunity.com/sharedfiles/filedetails/?id=1403395766>
-
 ## Steam Workshop Link
 
 <https://steamcommunity.com/sharedfiles/filedetails/?id=3101810034>
