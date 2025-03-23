@@ -812,12 +812,30 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 for _, ply in player.Iterator() do
                     hook.Remove("StartCommand", "Demon_MoveVictim" .. ply:Nick())
                 end
-
-                hook.Remove("PlayerDisconnected", "TTTTweaksDemonicPossessionReset")
-                hook.Remove("TTTPrepareRound", "TTTTweaksDemonicPossessionReset")
             end)
 
             return self:OldInitialize()
+        end
+
+        if CLIENT then
+            SWEP.OldPrimaryAttack = SWEP.PrimaryAttack
+
+            local oldHookAdd = hook.Add
+            function SWEP:PrimaryAttack()
+                local wep = self
+                hook.Add = function(name, id, fn)
+                    -- Override this hook and ensure the weapon is valid before calling it
+                    if name == "StartCommand" and string.StartsWith(id, "Demon_MoveVictim") then
+                        oldHookAdd(name, id, function(player, ucmd)
+                            if not IsValid(wep) then return end
+                            fn(player, ucmd)
+                        end)
+                    end
+                end
+
+                wep:OldPrimaryAttack()
+                hook.Add = oldHookAdd
+            end
         end
     end
 end)
