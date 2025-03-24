@@ -246,6 +246,7 @@ Fixed the bear trap damaging players on the next round, if trapped as the round 
 
 - "[TTT] Demonic Possession" by LeBroomer\
 Fixed the demonic possession error spamming if it goes unused for the round, after being placed down and the round restarts\
+Thanks goes to Mal for the full fix!\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1403395766>
 
 ## Steam Workshop Link
