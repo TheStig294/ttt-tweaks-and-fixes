@@ -819,15 +819,15 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
 
         if CLIENT then
             SWEP.OldPrimaryAttack = SWEP.PrimaryAttack
+
             function SWEP:PrimaryAttack()
                 self:OldPrimaryAttack()
-
                 local owner = self:GetOwner()
                 if not IsValid(owner) then return end
-
                 local hooks = hook.GetTable()["StartCommand"]
                 local hookId = "Demon_MoveVictim" .. owner:Nick()
                 local oldFn = hooks[hookId]
+
                 hook.Add("StartCommand", hookId, function(player, ucmd)
                     if not IsValid(self) then return end
                     oldFn(player, ucmd)
@@ -1373,5 +1373,8 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
                 self:Remove()
             end
         end
+    elseif class == "ttt_bear_trap" then
+        -- Fixed bear trap entity not having a human-readable name set
+        ENT.PrintName = "Bear Trap"
     end
 end)

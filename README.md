@@ -241,7 +241,7 @@ Fix performance issue on the server where the portal gun is checking for visible
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2315732527>
 
 - "BearTrap for TTT" by nerdhive\
-Fixed the bear trap damaging players on the next round, if trapped as the round restarts\
+Fixed the bear trap damaging players on the next round, if trapped as the round restarts. Also added a human-readable name to the trap entity.\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=407751746>
 
 - "[TTT] Demonic Possession" by LeBroomer\
