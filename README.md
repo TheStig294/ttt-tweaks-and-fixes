@@ -86,11 +86,11 @@ Credit to the original authors of the various mods fixed for the modified bits o
 Fixed error spam\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2958417945>
 
-- "Mimic Spanwer" by Jensons\
+- "Mimic Spanwer" by Jenssons\
 Fixed error spam, fixed the "Mimics spawned" message not displaying to Custom Roles traitors\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1092624255>
 
-- "Beenade" by Jensons\
+- "Beenade" by Jenssons\
 Fixed beenade not dealing less damage to Custom Roles traitors\
 Fixed missing NULL entity check error\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=913310851>
@@ -121,7 +121,7 @@ Fixed various lua errors and using wrong slot number\
 Fixed lua error if you appear to hit something on the server but not on the client\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=648957314>
 
-- "The PropHuntGun" by Jensons\
+- "The PropHuntGun" by Jenssons\
 Fixed the prop hunt gun not fully disguising you, you are now fully invisible and role icons like the detective icon no longer show overhead\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2796353349>
 
@@ -178,6 +178,11 @@ Fixed multiple players shooting the beam causing errors/stopping the other playe
 Fixed lua error when holstering the fortnite building tool\
 Fixed lua errors whenever an unknown entity is damaging a fortnite structure\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1433010063>
+
+- "TTT Chickenator (T Weapon)" by Jenssons\
+Fixed chickenator egg not setting the spawned chicken's attacker correctly\
+Fixed lua errors that happen when spawning chickens from eggs\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=1659437311>
 
 ## Extra fixes
 
