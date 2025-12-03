@@ -80,6 +80,9 @@ Licensed under Creative Commons: By Attribution 4.0 License\
 <http://creativecommons.org/licenses/by/4.0/>\
 Used when Hot Potato music replacement setting is on\
 \
+Credit goes to Mal for the Chickenator fixes!
+\
+\
 Credit to the original authors of the various mods fixed for the modified bits of their code used for the fixes:
 
 - "Lift Grenade" by Corvatile\
