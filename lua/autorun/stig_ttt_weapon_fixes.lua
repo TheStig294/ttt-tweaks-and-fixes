@@ -1376,7 +1376,7 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
     elseif class == "ttt_bear_trap" then
         -- Fixed bear trap entity not having a human-readable name set
         ENT.PrintName = "Bear Trap"
-    elseif class == "sent_eggt"
+    elseif class == "sent_eggt" then
         -- Fixed chickenator egg not setting the spawned chicken's attacker correctly
         -- Also fixes errors that happen when spawning chickens from eggs
         function ENT:PhysicsCollide(data)
@@ -1384,19 +1384,15 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
                 if not IsValid(self) then return end
                 if self.Spawning then return end
                 self.Spawning = true
-
                 local pos = data.HitPos
                 local norm = data.HitNormal
                 pos = pos + 4 * norm
-
                 -- Spawn the chicken
                 local chicken = ents.Create("ttt_chickent")
                 chicken:SetPos(pos)
                 chicken:Spawn()
                 chicken:Activate()
-
                 chicken:SetAttacker(self:GetOwner())
-
                 self:Remove()
             end)
         end

@@ -121,7 +121,7 @@ Fixed various lua errors and using wrong slot number\
 Fixed lua error if you appear to hit something on the server but not on the client\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=648957314>
 
-- "The PropHuntGun" by Jenssons\
+- "The PropHuntGun" by Active_Current\
 Fixed the prop hunt gun not fully disguising you, you are now fully invisible and role icons like the detective icon no longer show overhead\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=2796353349>
 
