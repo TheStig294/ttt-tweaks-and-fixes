@@ -98,6 +98,7 @@ Fixed error spam, fixed the "Mimics spawned" message not displaying to Custom Ro
 - "Beenade" by Jenssons\
 Fixed beenade not dealing less damage to Custom Roles traitors\
 Fixed missing NULL entity check error\
+Fixed non-bee manhacks using bee damage convars and dropping bee corpses (Thanks Mal!)\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=913310851>
 
 - "Shark Trap" by TheBonBon\
@@ -152,6 +153,7 @@ Added convar to make the dead ringer behave exactly like the original version by
 
 - "TTT Weeping Angel SWEP" by DatLycan\
 Fixed the weeping angel erroring whenever it is shot\
+Fixed the weeping angel having error models and erroring trying to play missing sounds (Thanks Mal!)\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1346794275>
 
 - "[TTT] Jetpack" by HowdyImFate\
