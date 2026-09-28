@@ -1101,12 +1101,24 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
             end)
         end
     elseif class == "ttt_beenade_proj" then
-        -- Fixes beenade not dealing less damage to non-vanilla traitors
+        local function IsBee(ent)
+            if ent:GetClass() == BeeNPCClass then
+                for _, child in pairs(ent:GetChildren()) do
+                    if not IsValid(child) then continue end
+                    if child:GetModel() ~= "models/lucian/props/stupid_bee.mdl" then continue end
+                    return true
+                end
+            end
+            return false
+        end
+
+        -- Fixes beenade not dealing less damage to non-vanilla traitors and non-bee manhacks using bee damage convars and dropping bee corpses
         function BeeNadeDamage(victim, dmg)
             local attacker = dmg:GetAttacker()
 
             -- Fixed error when victim is nil
-            if IsValid(attacker) and attacker:IsNPC() and attacker:GetClass() == BeeNPCClass then
+            -- Fixed non-bee manhacks using bee damage convars
+            if IsValid(attacker) and attacker:IsNPC() and IsBee(attacker) then
                 if not IsValid(victim) or not victim.GetRole then
                     dmg:SetDamage(BeeInnocentDamage)
                 elseif victim:GetRole() == ROLE_INNOCENT or victim.IsInnocentTeam and victim:IsInnocentTeam() then
@@ -1118,8 +1130,9 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
                 end
             end
 
-            --Annoyingly complex check to make the headcrab ragdolls invisible
-            if victim:GetClass() == BeeNPCClass then
+            -- Annoyingly complex check to make the headcrab ragdolls invisible
+            -- Fixed non-bee manhacks dropping bee corpses
+            if IsBee(victim) then
                 dmg:SetDamageType(DMG_REMOVENORAGDOLL)
 
                 --Odd behaviour occured when killing Bees with the 'crowbar'
