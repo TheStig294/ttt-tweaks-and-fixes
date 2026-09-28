@@ -1319,9 +1319,43 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
             end
         end
     elseif class == "weepingangel" then
-        -- Fixes the weeping angel erroring whenever it is shot
+        local STAB_COOLDOWN = 2
+        local STAB_FORCE = 12000
+        local STAB_DAMAGE = 500
+
+        local TELEPORT_COOLDOWN = 1
+        local TELEPORT_MAX_DIST_FROM_PLR = 450
+        local TELEPORT_MIN_DIST_FROM_PLR = 100
+        local TELEPORT_MAX_TRIES = 20
+
+        -- Fixes the weeping angel having error models, erroring whenever it is shot, and erroring trying to play missing sounds
+        function ENT:Initialize()
+            self:SetModel("models/the_sniper_9/doctorwho/extras/angels/angelidle.mdl")
+            self:PhysicsInit(SOLID_VPHYSICS)
+
+            local phys = self:GetPhysicsObject()
+            if phys:IsValid() then
+                phys:Wake()
+            end
+
+            self.Width = self:BoundingRadius() * 0.5
+
+            self.CurSound = ""
+
+            self.NextTeleport = 0
+            self.NextCreep = 0
+            self.NextEmit = 0
+            self.NextStab = 0
+
+            self.Knife = NULL
+
+            self.IsBeingCreepy = false
+
+            self:SetMoveType(MOVETYPE_NONE)
+        end
+
         function ENT:DrawKnife(vec)
-            self:SetModel("models/The_Sniper_9/DoctorWho/Extras/Angels/angelattack.mdl")
+            self:SetModel("models/the_sniper_9/doctorwho/extras/angels/angelattack.mdl")
             vec.z = 0
             vec:Normalize()
             local knifepos = self:GetPos() + vec * self.Width + Vector(0, 0, 0.5 * self.Width)
@@ -1332,6 +1366,64 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
             self.Knife:Spawn()
             self.Knife:SetColor(Color(0, 0, 0, 0))
             self.Knife:SetParent(self)
+        end
+
+        function ENT:TeleportToPos(pos)
+            self:SetModel("models/the_sniper_9/doctorwho/extras/angels/angelidle.mdl")
+
+            for i=1, TELEPORT_MAX_TRIES do
+                local tr = util.TraceLine({
+                    start    = pos,
+                    endpos   = pos - Vector(0, 0, 64),
+                    filter   = { self, self.Kinfe },
+                    mask     = MASK_NPCSOLID
+                })
+
+                local spawnpos = tr.HitPos + Vector( 0, 0, self.Width + 8 )
+                if util.PointContents(spawnpos) then
+                    self:SetPos(spawnpos )
+
+                    -- Jostle it a bit in case it's stuck
+                    local phys = self:GetPhysicsObject()
+                    phys:ApplyForceCenter( VectorRand() * 2 )
+                    break
+                end
+
+                pos = pos + Vector( math.Rand( -20, 20 ), math.Rand( -20, 20 ), math.Rand( -5, 5 ) )
+            end
+        end
+
+        function ENT:TeleportBehindVictim()
+            self:SetModel("models/the_sniper_9/doctorwho/extras/angels/angelpoint.mdl")
+            if CurTime() < self.NextTeleport then return end
+
+            local plraim = self.Victim:GetAimVector()
+            plraim.z = 0
+            plraim:Normalize()
+
+            local plrpos = self.Victim:GetShootPos()
+            local tr = util.TraceLine({
+                start    = plrpos - plraim * TELEPORT_MIN_DIST_FROM_PLR,
+                endpos   = plrpos - plraim * TELEPORT_MAX_DIST_FROM_PLR,
+                filter   = { self, self.Kinfe, self.Victim },
+                mask     = MASK_NPCSOLID
+            })
+
+            self:TeleportToPos(tr.HitPos + tr.HitNormal * self.Width)
+            self.NextTeleport = CurTime() + TELEPORT_COOLDOWN
+        end
+
+        function ENT:StabbyLunge(vec)
+            if CurTime() < self.NextStab then return end
+
+            local phys = self:GetPhysicsObject()
+            local stabvec = vec * STAB_FORCE + Vector(0, 0, 0.4 * STAB_FORCE)
+            phys:ApplyForceCenter(stabvec)
+
+            local vicpos = self.Victim:GetShootPos()
+            self.Victim:TakeDamage(STAB_DAMAGE, self, self.Knife)
+
+            self.NextStab = CurTime() + STAB_COOLDOWN
         end
     elseif class == "d.va_mech" then
         -- Fixes the D.Va mech erroring on activating self-destruct
