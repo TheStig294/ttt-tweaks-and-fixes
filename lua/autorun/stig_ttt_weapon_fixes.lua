@@ -877,6 +877,602 @@ hook.Add("PreRegisterSWEP", "StigTTTWeaponFixes", function(SWEP, class)
                 end)
             end
         end
+    elseif class == "ttt_weapon_lasso" then
+        -- Fixes the lasso removing PAP upgrades from weapons and not restoring remaining ammo in the clip properly
+        local LASSO_SAFE_DIST = 80
+        local LASSO_RETURN_SPEED = 800
+        local LASSO_RAGDOLL_FORWARD_OFFSET = 55
+        local LASSO_RAGDOLL_SIDE_OFFSET = 35
+        local LASSO_PULL_FORCE_MULT = 35
+        local LASSO_RAGDOLL_PULL_FORCE_MULT = 10
+        local LASSO_PULL_DAMPING = 10
+        local LASSO_PULL_MAX_SPEED = 1200
+        local LASSO_RAGDOLL_PULL_MAX_SPEED = 350
+        local LASSO_PULL_RESPONSE = 0.85
+        local LASSO_RAGDOLL_PULL_RESPONSE = 0.45
+        local LASSO_TARGET_ARRIVE_DIST = 70
+        local LASSO_PULL_MAX_TIME = 2.25
+        local LASSO_PLAYER_COOLDOWN = 4
+        local LASSO_PLAYER_RAGDOLL_EXTRA_TIME = 2
+        local LASSO_SPIN_SPEED_RETURN = 20
+        local LASSO_SET_POS_MAGNITUDE = 15
+        local LASSO_SET_POS_ITERATIONS = 2
+
+        local function LassoPlayerInvis(ply, invisible)
+            if not IsValid(ply) then return end
+            ply:SetNoDraw(invisible)
+            ply:DrawShadow(not invisible)
+        end
+
+        local lassoHullTraceData = {}
+
+        local function LassoPlayerHullTrace(pos, ply, filter)
+            lassoHullTraceData.start = pos
+            lassoHullTraceData.endpos = pos
+            lassoHullTraceData.filter = filter
+
+            return util.TraceEntity(lassoHullTraceData, ply)
+        end
+
+        local lassoSetPosDirections = {Vector(0, 0, 0), Vector(0, 0, 1), Vector(1, 0, 0), Vector(-1, 0, 0), Vector(0, 1, 0), Vector(0, -1, 0)}
+
+        for deg = 45, 315, 90 do
+            local r = math.rad(deg)
+            table.insert(lassoSetPosDirections, Vector(math.Round(math.cos(r)), math.Round(math.sin(r)), 0))
+        end
+
+        local function LassoPlayerSetPosNoBlock(ply, pos, filter)
+            if not IsValid(ply) then return false end
+            local tr
+            local dirvec
+            local magnitude = LASSO_SET_POS_MAGNITUDE
+            local directionIndex = 1
+            local iteration = 1
+            repeat
+                dirvec = lassoSetPosDirections[directionIndex] * magnitude
+                directionIndex = directionIndex + 1
+
+                if directionIndex > #lassoSetPosDirections then
+                    iteration = iteration + 1
+                    directionIndex = 1
+                    magnitude = magnitude + LASSO_SET_POS_MAGNITUDE
+
+                    if iteration > LASSO_SET_POS_ITERATIONS then
+                        ply:SetPos(pos)
+
+                        return false
+                    end
+                end
+
+                tr = LassoPlayerHullTrace(pos + dirvec, ply, filter)
+            until tr.Hit == false
+            ply:SetPos(pos + dirvec)
+
+            return true
+        end
+
+        local function LassoRetrieveWeapons(ply)
+            if not IsValid(ply) then return end
+            local papData = ply.lassoPAPData or {}
+
+            for _, stored in ipairs(ply.lassoStoredWeapons or {}) do
+                if stored.class then
+                    local wep = ply:Give(stored.class)
+
+                    if IsValid(wep) then
+                        -- Re-apply PAP upgrades that were stripped by the lasso
+                        local upgrade = papData[stored.class]
+
+                        if upgrade then
+                            wep.PAPUpgrade = upgrade
+
+                            if TTTPAP and TTTPAP.ApplyUpgrade then
+                                TTTPAP:ApplyUpgrade(wep, upgrade)
+                            end
+                        end
+
+                        if stored.clip1 ~= nil then
+                            wep:SetClip1(stored.clip1)
+                        end
+
+                        if stored.clip2 ~= nil then
+                            wep:SetClip2(stored.clip2)
+                        end
+                    end
+                end
+            end
+
+            ply.lassoStoredWeapons = nil
+            ply.lassoPAPData = nil
+        end
+
+        local function EndLassoRagdoll(ply, finalPos)
+            if not IsValid(ply) then return end
+            local rag = ply.lassoRagdoll
+            local ragValid = IsValid(rag)
+            local wasLassoRagdolled = ragValid or ply:GetNWBool("LassoRagdolled", false) or ply.lassoOldMoveType ~= nil or ply.lassoOldCollisionGroup ~= nil or ply.lassoStoredWeapons ~= nil
+            ply:SetNWBool("LassoRagdolled", false)
+            ply:SetNWEntity("LassoViewRagdoll", NULL)
+
+            if not wasLassoRagdolled then
+                if ply.lassoNeedsVisibleOnSpawn and ply:Alive() and not (ply.IsSpec and ply:IsSpec()) then
+                    LassoPlayerInvis(ply, false)
+                    ply.lassoNeedsVisibleOnSpawn = nil
+                end
+
+                return
+            end
+
+            if not ply:Alive() or (ply.IsSpec and ply:IsSpec()) then
+                ply:SetParent(nil)
+
+                if ragValid then
+                    rag.lassoPlayer = nil
+                    SafeRemoveEntity(rag)
+                end
+
+                ply.lassoRagdoll = nil
+                ply.lassoOldMoveType = nil
+                ply.lassoOldCollisionGroup = nil
+                ply.lassoOldPos = nil
+                ply.lassoStoredWeapons = nil
+                ply.lassoPAPData = nil
+                ply.lassoNeedsVisibleOnSpawn = true
+
+                return
+            end
+
+            ply.lassoNeedsVisibleOnSpawn = nil
+            local pos = finalPos
+
+            if not pos then
+                if ragValid then
+                    pos = rag:GetPos()
+                elseif ply.lassoOldPos then
+                    pos = ply.lassoOldPos
+                else
+                    pos = ply:GetPos()
+                end
+            end
+
+            ply:SetParent(nil)
+            ply:SetMoveType(ply.lassoOldMoveType or MOVETYPE_WALK)
+            ply:SetCollisionGroup(ply.lassoOldCollisionGroup or COLLISION_GROUP_PLAYER)
+            LassoPlayerInvis(ply, false)
+
+            if ragValid then
+                LassoPlayerSetPosNoBlock(ply, pos + Vector(0, 0, 5), {ply, rag})
+
+                rag.lassoPlayer = nil
+                SafeRemoveEntity(rag)
+            else
+                LassoPlayerSetPosNoBlock(ply, pos + Vector(0, 0, 5), {ply})
+            end
+
+            timer.Simple(0, function()
+                if IsValid(ply) and ply:Alive() and not (ply.IsSpec and ply:IsSpec()) then
+                    LassoPlayerInvis(ply, false)
+                end
+            end)
+
+            timer.Simple(0.1, function()
+                if IsValid(ply) and ply:Alive() and not (ply.IsSpec and ply:IsSpec()) then
+                    LassoRetrieveWeapons(ply)
+                end
+            end)
+
+            ply.lassoRagdoll = nil
+            ply.lassoOldMoveType = nil
+            ply.lassoOldCollisionGroup = nil
+            ply.lassoOldPos = nil
+        end
+
+        local function EndGhostPull(ent)
+            if not IsValid(ent) then return end
+            ent:SetNotSolid(false)
+            ent:SetCollisionGroup(ent.__lasso_oldColl or COLLISION_GROUP_NONE)
+            ent:SetMoveType(ent.__lasso_oldMoveType or MOVETYPE_STEP)
+            local phys = ent:GetPhysicsObject()
+
+            if IsValid(phys) and ent.__lasso_physWasMotion ~= nil then
+                phys:EnableMotion(ent.__lasso_physWasMotion)
+
+                if ent.__lasso_physWasMotion then
+                    phys:Wake()
+                end
+            end
+
+            ent.__lasso_oldMoveType = nil
+            ent.__lasso_oldColl = nil
+            ent.__lasso_oldSolid = nil
+            ent.__lasso_physWasMotion = nil
+        end
+
+        local function CleanupPulledTarget(target, targetPlayer)
+            if IsValid(targetPlayer) then
+                EndLassoRagdoll(targetPlayer)
+
+                return
+            end
+
+            if IsValid(target) then
+                EndGhostPull(target)
+            end
+        end
+
+        local function GetLassoReturnPos(owner)
+            if not IsValid(owner) then return Vector(0, 0, 0) end
+            local bone = owner:LookupBone("ValveBiped.Bip01_R_Hand")
+
+            if bone then
+                local pos, ang = owner:GetBonePosition(bone)
+                if pos and ang then return pos + ang:Up() * 10 + ang:Forward() * 4 end
+            end
+
+            return owner:GetShootPos() + owner:GetRight() * 12 - owner:GetUp() * 18
+        end
+
+        local function GetLassoModelAngle(dir, yawOffset)
+            local ang = dir:Angle()
+            ang:RotateAroundAxis(ang:Right(), 90)
+            ang:RotateAroundAxis(ang:Right(), -20)
+            ang.y = ang.y + (yawOffset or 0)
+
+            return ang
+        end
+
+        local function ClampAboveGround(pos, target)
+            local mins = Vector(-16, -16, 0)
+            local maxs = Vector(16, 16, 72)
+
+            if IsValid(target) then
+                local obbMins = target:OBBMins()
+                local obbMaxs = target:OBBMaxs()
+
+                if obbMins and obbMaxs then
+                    mins = Vector(obbMins.x, obbMins.y, 0)
+                    maxs = Vector(obbMaxs.x, obbMaxs.y, math.max(obbMaxs.z - obbMins.z, 64))
+                end
+            end
+
+            local start = pos + Vector(0, 0, 64)
+            local finish = pos - Vector(0, 0, 2048)
+
+            local tr = util.TraceHull({
+                start = start,
+                endpos = finish,
+                mins = mins,
+                maxs = maxs,
+                mask = MASK_SOLID_BRUSHONLY,
+                filter = function() return false end
+            })
+
+            if tr.Hit then
+                local safeZ = tr.HitPos.z + 2
+
+                if pos.z < safeZ then
+                    pos.z = safeZ
+                end
+            end
+
+            return pos
+        end
+
+        local function SetPhysAngularVelocityZero(phys)
+            if not IsValid(phys) then return end
+
+            if phys.SetAngleVelocity then
+                phys:SetAngleVelocity(Vector(0, 0, 0))
+            elseif phys.GetAngleVelocity and phys.AddAngleVelocity then
+                phys:AddAngleVelocity(-phys:GetAngleVelocity())
+            end
+        end
+
+        local function ApplyPullForceToPhysicsObject(phys, goalPos, dt, forceMult, maxSpeed, response)
+            if not IsValid(phys) then return false end
+            forceMult = forceMult or LASSO_PULL_FORCE_MULT
+            maxSpeed = maxSpeed or LASSO_PULL_MAX_SPEED
+            response = response or LASSO_PULL_RESPONSE
+            phys:EnableMotion(true)
+            phys:Wake()
+            local pos = phys:GetPos()
+            local offset = goalPos - pos
+            local dist = offset:Length()
+            if dist <= 1 then return true end
+            local dir = offset:GetNormalized()
+            local mass = math.max(phys:GetMass(), 1)
+            local desiredSpeed = math.Clamp(dist * forceMult, 60, maxSpeed)
+
+            if dist < LASSO_TARGET_ARRIVE_DIST then
+                desiredSpeed = math.Clamp(dist * 3, 0, maxSpeed)
+            end
+
+            local desiredVelocity = dir * desiredSpeed
+            local currentVelocity = phys:GetVelocity()
+            local velocityDelta = (desiredVelocity - currentVelocity) * response
+            local force = (velocityDelta * mass) / math.max(dt, 0.01)
+            force = force - (currentVelocity * mass * LASSO_PULL_DAMPING)
+            local maxForce = mass * 60000
+
+            if force:Length() > maxForce then
+                force = force:GetNormalized() * maxForce
+            end
+
+            phys:ApplyForceCenter(force)
+
+            return true
+        end
+
+        local function ApplyPhysicsPull(target, goalPos, dt)
+            if not IsValid(target) then return false end
+
+            if target:GetClass() == "prop_ragdoll" then
+                local ragPos = target:GetPos()
+                local offset = goalPos - ragPos
+
+                for i = 0, target:GetPhysicsObjectCount() - 1 do
+                    local phys = target:GetPhysicsObjectNum(i)
+
+                    if IsValid(phys) then
+                        ApplyPullForceToPhysicsObject(phys, phys:GetPos() + offset, dt, LASSO_RAGDOLL_PULL_FORCE_MULT, LASSO_RAGDOLL_PULL_MAX_SPEED, LASSO_RAGDOLL_PULL_RESPONSE)
+                    end
+                end
+
+                return true
+            end
+
+            local phys = target:GetPhysicsObject()
+            if IsValid(phys) then return ApplyPullForceToPhysicsObject(phys, goalPos, dt, LASSO_PULL_FORCE_MULT, LASSO_PULL_MAX_SPEED, LASSO_PULL_RESPONSE) end
+
+            return false
+        end
+
+        local function MoveNonPhysicsFallback(target, goalPos)
+            if not IsValid(target) then return end
+            local currentPos = target:GetPos()
+            local dist = currentPos:Distance(goalPos)
+            if dist <= 1 then return end
+            local stepScale = math.Clamp(dist / 700, 0.05, 0.22)
+            target:SetPos(LerpVector(stepScale, currentPos, goalPos))
+        end
+
+        local function PullTargetTowardGoal(target, goalPos, dt)
+            if not IsValid(target) then return end
+            local usedPhysics = ApplyPhysicsPull(target, goalPos, dt)
+
+            if not usedPhysics then
+                MoveNonPhysicsFallback(target, goalPos)
+            end
+        end
+
+        local function StopPulledPhysics(target)
+            if not IsValid(target) then return end
+
+            if target:GetClass() == "prop_ragdoll" then
+                for i = 0, target:GetPhysicsObjectCount() - 1 do
+                    local phys = target:GetPhysicsObjectNum(i)
+
+                    if IsValid(phys) then
+                        phys:SetVelocity(Vector(0, 0, 0))
+                        SetPhysAngularVelocityZero(phys)
+                        phys:Wake()
+                    end
+                end
+
+                return
+            end
+
+            local phys = target:GetPhysicsObject()
+
+            if IsValid(phys) then
+                phys:SetVelocity(Vector(0, 0, 0))
+                SetPhysAngularVelocityZero(phys)
+                phys:Wake()
+            end
+        end
+
+        local function GetTargetDistanceToGoal(target, goalPos)
+            if not IsValid(target) then return 0 end
+            if target:GetClass() == "prop_ragdoll" then return target:GetPos():Distance(goalPos) end
+            local phys = target:GetPhysicsObject()
+            if IsValid(phys) then return phys:GetPos():Distance(goalPos) end
+
+            return target:GetPos():Distance(goalPos)
+        end
+
+        function SWEP:LassoReturn(owner, lassoModel, rope, target, targetPlayer)
+            if not IsValid(owner) then
+                if IsValid(lassoModel) then
+                    if lassoModel.LassoSound then
+                        lassoModel.LassoSound:Stop()
+                    end
+
+                    lassoModel:Remove()
+                end
+
+                if IsValid(rope) then
+                    rope:Remove()
+                end
+
+                CleanupPulledTarget(target, targetPlayer)
+                self.LassoActive = false
+                local revealDelay = math.max((self:GetNextPrimaryFire() or CurTime()) - CurTime(), 0)
+                self:ScheduleHeldLassoReveal(revealDelay)
+
+                return
+            end
+
+            local timerRet = "Lasso_Return_" .. self:EntIndex()
+            local lassoYawOffset = 0
+            local pullStartTime = CurTime()
+
+            timer.Create(timerRet, 0.01, 0, function()
+                if not IsValid(self) or not IsValid(owner) or not IsValid(lassoModel) then
+                    if IsValid(lassoModel) then
+                        if lassoModel.LassoSound then
+                            lassoModel.LassoSound:Stop()
+                        end
+
+                        lassoModel:Remove()
+                    end
+
+                    if IsValid(rope) then
+                        rope:Remove()
+                    end
+
+                    CleanupPulledTarget(target, targetPlayer)
+                    timer.Remove(timerRet)
+
+                    if IsValid(self) then
+                        self.LassoActive = false
+                        local revealDelay = math.max((self:GetNextPrimaryFire() or CurTime()) - CurTime(), 0)
+                        self:ScheduleHeldLassoReveal(revealDelay)
+                    end
+
+                    return
+                end
+
+                local handPos = GetLassoReturnPos(owner)
+                local ownerAim = owner:GetAimVector()
+                local goalPos
+
+                if IsValid(targetPlayer) then
+                    goalPos = owner:GetShootPos() + ownerAim * LASSO_RAGDOLL_FORWARD_OFFSET + owner:GetRight() * LASSO_RAGDOLL_SIDE_OFFSET
+                else
+                    goalPos = owner:GetShootPos() + ownerAim * LASSO_SAFE_DIST
+                end
+
+                goalPos = ClampAboveGround(goalPos, target)
+                local pos = lassoModel:GetPos()
+                local dirBack = (handPos - pos):GetNormalized()
+                local newPos = pos + dirBack * (LASSO_RETURN_SPEED * FrameTime())
+                lassoModel:SetPos(newPos)
+                lassoYawOffset = lassoYawOffset + LASSO_SPIN_SPEED_RETURN
+                lassoModel:SetAngles(GetLassoModelAngle(dirBack, lassoYawOffset))
+
+                if IsValid(target) then
+                    PullTargetTowardGoal(target, goalPos, FrameTime())
+                end
+
+                local lassoReturned = newPos:Distance(handPos) < 50
+                local targetReachedGoal = not IsValid(target) or GetTargetDistanceToGoal(target, goalPos) <= LASSO_TARGET_ARRIVE_DIST
+                local pullTimedOut = CurTime() - pullStartTime >= LASSO_PULL_MAX_TIME
+
+                if lassoReturned and (targetReachedGoal or pullTimedOut) then
+                    if IsValid(lassoModel) then
+                        if lassoModel.LassoSound then
+                            lassoModel.LassoSound:Stop()
+                        end
+
+                        lassoModel:Remove()
+                    end
+
+                    if IsValid(rope) then
+                        rope:Remove()
+                    end
+
+                    if IsValid(targetPlayer) then
+                        local nextFireTime = CurTime() + LASSO_PLAYER_COOLDOWN
+                        self:SetNextPrimaryFire(nextFireTime)
+                        self:SetNextSecondaryFire(nextFireTime)
+
+                        if IsValid(target) then
+                            StopPulledPhysics(target)
+                        end
+
+                        timer.Simple(LASSO_PLAYER_RAGDOLL_EXTRA_TIME, function()
+                            if IsValid(targetPlayer) and IsValid(targetPlayer.lassoRagdoll) then
+                                EndLassoRagdoll(targetPlayer)
+                            end
+                        end)
+
+                        self.LassoActive = false
+                        self:ScheduleHeldLassoReveal(nextFireTime - CurTime())
+                    else
+                        if IsValid(target) then
+                            StopPulledPhysics(target)
+                            EndGhostPull(target)
+                        end
+
+                        local revealDelay = math.max((self:GetNextPrimaryFire() or CurTime()) - CurTime(), 0)
+                        self.LassoActive = false
+                        self:ScheduleHeldLassoReveal(revealDelay)
+                    end
+
+                    timer.Remove(timerRet)
+                end
+            end)
+        end
+
+        -- Stores a weapon's PAP upgrade
+        -- This is called just before ragdolling players and stripping their weapons in the original SWEP
+        SWEP.OldBreakTetherOnPrimaryTarget = SWEP.BreakTetherOnPrimaryTarget
+
+        function SWEP:BreakTetherOnPrimaryTarget(target)
+            if IsValid(target) and target:IsPlayer() and not IsValid(target.lassoRagdoll) then
+                target.lassoPAPData = {}
+
+                for _, wep in ipairs(target:GetWeapons()) do
+                    if IsValid(wep) and wep.PAPUpgrade then
+                        target.lassoPAPData[wep:GetClass()] = wep.PAPUpgrade
+                    end
+                end
+            end
+
+            return self:OldBreakTetherOnPrimaryTarget(target)
+        end
+
+        hook.Add("PlayerDeath", "LassoCleanupRagdoll", function(ply)
+            EndLassoRagdoll(ply)
+            local tetherWeapon = ply:GetNWEntity("LassoTetherWeapon", NULL)
+
+            if IsValid(tetherWeapon) and tetherWeapon.ClearTether then
+                tetherWeapon:ClearTether(true)
+            end
+
+            for _, wep in ipairs(ents.FindByClass("weapon_ttt_lasso")) do
+                if IsValid(wep) and wep.TetherTarget == ply then
+                    wep:ClearTether(true)
+                end
+            end
+        end)
+
+        hook.Add("PlayerDisconnected", "LassoCleanupDisconnected", function(ply)
+            EndLassoRagdoll(ply)
+            local tetherWeapon = ply:GetNWEntity("LassoTetherWeapon", NULL)
+
+            if IsValid(tetherWeapon) and tetherWeapon.ClearTether then
+                tetherWeapon:ClearTether(true)
+            end
+
+            for _, wep in ipairs(ents.FindByClass("weapon_ttt_lasso")) do
+                if IsValid(wep) and wep.TetherTarget == ply then
+                    wep:ClearTether(true)
+                end
+            end
+        end)
+
+        hook.Add("PlayerSpawn", "LassoCleanupRagdollSpawn", function(ply)
+            EndLassoRagdoll(ply)
+            ply:SetNWBool("LassoRagdolled", false)
+            ply:SetNWEntity("LassoViewRagdoll", NULL)
+            local tetherWeapon = ply:GetNWEntity("LassoTetherWeapon", NULL)
+
+            if IsValid(tetherWeapon) and tetherWeapon.ClearTether then
+                tetherWeapon:ClearTether(true)
+            else
+                ply:SetNWBool("LassoTethered", false)
+                ply:SetNWEntity("LassoTetherOwner", NULL)
+                ply:SetNWEntity("LassoTetherWeapon", NULL)
+                TTT_Lasso_TetherRegistry[ply] = nil
+            end
+        end)
+
+        hook.Add("EntityRemoved", "LassoCleanupRemovedRagdoll", function(ent)
+            if IsValid(ent.lassoPlayer) then
+                EndLassoRagdoll(ent.lassoPlayer)
+            end
+        end)
     end
 end)
 
@@ -1106,9 +1702,11 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
                 for _, child in pairs(ent:GetChildren()) do
                     if not IsValid(child) then continue end
                     if child:GetModel() ~= "models/lucian/props/stupid_bee.mdl" then continue end
+
                     return true
                 end
             end
+
             return false
         end
 
@@ -1322,7 +1920,6 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
         local STAB_COOLDOWN = 2
         local STAB_FORCE = 12000
         local STAB_DAMAGE = 500
-
         local TELEPORT_COOLDOWN = 1
         local TELEPORT_MAX_DIST_FROM_PLR = 450
         local TELEPORT_MIN_DIST_FROM_PLR = 100
@@ -1332,25 +1929,20 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
         function ENT:Initialize()
             self:SetModel("models/the_sniper_9/doctorwho/extras/angels/angelidle.mdl")
             self:PhysicsInit(SOLID_VPHYSICS)
-
             local phys = self:GetPhysicsObject()
+
             if phys:IsValid() then
                 phys:Wake()
             end
 
             self.Width = self:BoundingRadius() * 0.5
-
             self.CurSound = ""
-
             self.NextTeleport = 0
             self.NextCreep = 0
             self.NextEmit = 0
             self.NextStab = 0
-
             self.Knife = NULL
-
             self.IsBeingCreepy = false
-
             self:SetMoveType(MOVETYPE_NONE)
         end
 
@@ -1371,42 +1963,41 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
         function ENT:TeleportToPos(pos)
             self:SetModel("models/the_sniper_9/doctorwho/extras/angels/angelidle.mdl")
 
-            for i=1, TELEPORT_MAX_TRIES do
+            for i = 1, TELEPORT_MAX_TRIES do
                 local tr = util.TraceLine({
-                    start    = pos,
-                    endpos   = pos - Vector(0, 0, 64),
-                    filter   = { self, self.Kinfe },
-                    mask     = MASK_NPCSOLID
+                    start = pos,
+                    endpos = pos - Vector(0, 0, 64),
+                    filter = {self, self.Kinfe},
+                    mask = MASK_NPCSOLID
                 })
 
-                local spawnpos = tr.HitPos + Vector( 0, 0, self.Width + 8 )
-                if util.PointContents(spawnpos) then
-                    self:SetPos(spawnpos )
+                local spawnpos = tr.HitPos + Vector(0, 0, self.Width + 8)
 
+                if util.PointContents(spawnpos) then
+                    self:SetPos(spawnpos)
                     -- Jostle it a bit in case it's stuck
                     local phys = self:GetPhysicsObject()
-                    phys:ApplyForceCenter( VectorRand() * 2 )
+                    phys:ApplyForceCenter(VectorRand() * 2)
                     break
                 end
 
-                pos = pos + Vector( math.Rand( -20, 20 ), math.Rand( -20, 20 ), math.Rand( -5, 5 ) )
+                pos = pos + Vector(math.Rand(-20, 20), math.Rand(-20, 20), math.Rand(-5, 5))
             end
         end
 
         function ENT:TeleportBehindVictim()
             self:SetModel("models/the_sniper_9/doctorwho/extras/angels/angelpoint.mdl")
             if CurTime() < self.NextTeleport then return end
-
             local plraim = self.Victim:GetAimVector()
             plraim.z = 0
             plraim:Normalize()
-
             local plrpos = self.Victim:GetShootPos()
+
             local tr = util.TraceLine({
-                start    = plrpos - plraim * TELEPORT_MIN_DIST_FROM_PLR,
-                endpos   = plrpos - plraim * TELEPORT_MAX_DIST_FROM_PLR,
-                filter   = { self, self.Kinfe, self.Victim },
-                mask     = MASK_NPCSOLID
+                start = plrpos - plraim * TELEPORT_MIN_DIST_FROM_PLR,
+                endpos = plrpos - plraim * TELEPORT_MAX_DIST_FROM_PLR,
+                filter = {self, self.Kinfe, self.Victim},
+                mask = MASK_NPCSOLID
             })
 
             self:TeleportToPos(tr.HitPos + tr.HitNormal * self.Width)
@@ -1415,14 +2006,11 @@ hook.Add("PreRegisterSENT", "StigTTTWeaponFixes", function(ENT, class)
 
         function ENT:StabbyLunge(vec)
             if CurTime() < self.NextStab then return end
-
             local phys = self:GetPhysicsObject()
             local stabvec = vec * STAB_FORCE + Vector(0, 0, 0.4 * STAB_FORCE)
             phys:ApplyForceCenter(stabvec)
-
             local vicpos = self.Victim:GetShootPos()
             self.Victim:TakeDamage(STAB_DAMAGE, self, self.Knife)
-
             self.NextStab = CurTime() + STAB_COOLDOWN
         end
     elseif class == "d.va_mech" then

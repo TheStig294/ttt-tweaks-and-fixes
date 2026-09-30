@@ -191,6 +191,10 @@ Fixed chickenator egg not setting the spawned chicken's attacker correctly\
 Fixed lua errors that happen when spawning chickens from eggs\
 <https://steamcommunity.com/sharedfiles/filedetails/?id=1659437311>
 
+- "[TTT] Lasso" by Corvatile\
+Fixed the lasso removing PAP upgrades from weapons and not restoring remaining ammo in the clip properly\
+<https://steamcommunity.com/sharedfiles/filedetails/?id=3727222594>
+
 ## Extra fixes
 
 The following mods were fixed without needing to change bits of their code.
